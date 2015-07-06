@@ -567,7 +567,13 @@ public class ReplayWorkload extends Workload
 	public boolean doInsert(DB db, Object threadstate)
 	{
 		String[] trace = null;
-		try{trace = tracefile.readLine().split(",");}catch(Exception e){e.printStackTrace();}
+		synchronized(this){
+			try{
+				trace = tracefile.readLine().split(",");
+			}catch(Exception e){
+				e.printStackTrace();
+			}
+		}
 		String dbkey = trace[1];
 		HashMap<String, ByteIterator> values = buildValues(dbkey);
 		if (db.insert(table,dbkey,values) == 0)
@@ -585,7 +591,13 @@ public class ReplayWorkload extends Workload
 	public boolean doTransaction(DB db, Object threadstate)
 	{
 		String[] trace = null;
-		try{trace = tracefile.readLine().split(",");}catch(Exception e){e.printStackTrace();}
+		synchronized(this){
+			try{
+				trace = tracefile.readLine().split(",");
+			}catch(Exception e){
+				e.printStackTrace();
+			}
+		}
 		String op = trace[0];
 		String dbkey = trace[1];
 
