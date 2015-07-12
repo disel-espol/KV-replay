@@ -36,4 +36,4 @@ insertproportion=0
 
 requestdistribution=zipfian
 
-tracefile=/home/eboza/ESPOL/MCC/2015/01/SOA/Homework/HW00-ProyectoSOA/Experimento01-MedicionOpsPerSecond-ZipfianVsReplay-2015-07-08/parsedFile-Youtube-MERGED-DUPLICATED-5m.dat
+tracefile=parsedFile-Youtube-MERGED-DUPLICATED-5m.dat
