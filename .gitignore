@@ -8,3 +8,7 @@ output*
 .project
 .classpath
 .settings
+
+# ignore tracefiles (too big)
+workloads/parsedFile-Youtube-MERGED-DUPLICATED-5m.dat
+workloads/parsedFile-tracefile-OutputFromRedis.dat
