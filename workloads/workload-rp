@@ -38,3 +38,6 @@ requestdistribution=zipfian
 
 # EBG - 07/02/2015 - Added the path and name of tracefile.
 tracefile=workloads/workload-rpYoutube.dat
+
+# EBG - 07/12/2015 - Added a flag for chache behaviour of the DB.
+ascache=true

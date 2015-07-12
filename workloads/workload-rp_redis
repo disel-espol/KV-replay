@@ -36,4 +36,7 @@ insertproportion=0
 
 requestdistribution=zipfian
 
-tracefile=parsedFile-tracefile-OutputFromRedis.dat
+tracefile=workloads/parsedFile-tracefile-OutputFromRedis.dat
+
+# EBG - 07/12/2015 - Added a flag for chache behaviour of the DB.
+ascache=true

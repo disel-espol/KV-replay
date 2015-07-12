@@ -36,4 +36,7 @@ insertproportion=0
 
 requestdistribution=zipfian
 
-tracefile=parsedFile-Youtube-MERGED-DUPLICATED-5m.dat
+tracefile=workloads/parsedFile-Youtube-MERGED-DUPLICATED-5m.dat
+
+# EBG - 07/12/2015 - Added a flag for chache behaviour of the DB.
+ascache=true
