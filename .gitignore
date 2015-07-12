@@ -12,3 +12,6 @@ output*
 # ignore tracefiles (too big)
 workloads/parsedFile-Youtube-MERGED-DUPLICATED-5m.dat
 workloads/parsedFile-tracefile-OutputFromRedis.dat
+
+# ignore d.dat file (output from run)
+d.dat
