@@ -161,6 +161,18 @@ public class ReplayWorkload extends Workload
 
 	boolean writeallfields;
 
+	/**
+	 * The name of the property for deciding if the DB acts like a CACHE (true), default is false.
+	 */
+	public static final String AS_CACHE_PROPERTY="ascache";
+	
+	/**
+	 * The default value for the ascache property.
+	 */
+	public static final String AS_CACHE_PROPERTY_DEFAULT="false";
+
+	boolean ascache;
+
 
   /**
    * The name of the property for deciding whether to check all returned
@@ -373,6 +385,8 @@ public class ReplayWorkload extends Workload
 		
 		readallfields=Boolean.parseBoolean(p.getProperty(READ_ALL_FIELDS_PROPERTY,READ_ALL_FIELDS_PROPERTY_DEFAULT));
 		writeallfields=Boolean.parseBoolean(p.getProperty(WRITE_ALL_FIELDS_PROPERTY,WRITE_ALL_FIELDS_PROPERTY_DEFAULT));
+
+		ascache=Boolean.parseBoolean(p.getProperty(AS_CACHE_PROPERTY,AS_CACHE_PROPERTY_DEFAULT));
 		
     		dataintegrity = Boolean.parseBoolean(p.getProperty(DATA_INTEGRITY_PROPERTY, DATA_INTEGRITY_PROPERTY_DEFAULT));
     		//Confirm that fieldlengthgenerator returns a constant if data
@@ -684,6 +698,11 @@ public class ReplayWorkload extends Workload
     		HashMap<String,ByteIterator> cells =
         	new HashMap<String,ByteIterator>();
 		db.read(table,keyname,fields,cells);
+
+		// EBG - 07/12/2015 - If working AS_CACHE and get result is empty, Insert the record. 
+    		if (ascache && cells.isEmpty()) {
+		   doTransactionInsert(db,keyname);
+    		}
 
     		if (dataintegrity) {
     		  verifyRow(keyname, cells);
