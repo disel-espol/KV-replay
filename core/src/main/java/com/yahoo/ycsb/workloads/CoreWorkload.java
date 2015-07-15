@@ -664,7 +664,6 @@ public class CoreWorkload extends Workload
 			db.read(table,keyname,fields,cells);
 
                 // EBG - 07/12/2015 - If working AS_CACHE and get result is empty, Insert the record. 
-                System.out.println(ascache);
                 if (ascache && cells.isEmpty()) {
                 	doTransactionInsert(db);
                 }
