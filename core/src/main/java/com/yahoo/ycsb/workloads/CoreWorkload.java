@@ -665,7 +665,7 @@ public class CoreWorkload extends Workload
 
                 // EBG - 07/12/2015 - If working AS_CACHE and get result is empty, Insert the record. 
                 if (ascache && cells.isEmpty()) {
-                	doTransactionInsert(db);
+                	doTransactionInsert(db,keyname);
                 }
 
 		if (dataintegrity) {
@@ -780,6 +780,12 @@ public class CoreWorkload extends Workload
 
 		String dbkey = buildKeyName(keynum);
 
+		HashMap<String, ByteIterator> values = buildValues(dbkey);
+		db.insert(table,dbkey,values);
+	}
+	
+	public void doTransactionInsert(DB db, String dbkey)
+	{
 		HashMap<String, ByteIterator> values = buildValues(dbkey);
 		db.insert(table,dbkey,values);
 	}
