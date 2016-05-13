@@ -1,49 +1,52 @@
-Yahoo! Cloud System Benchmark (YCSB)
-====================================
-[![Build Status](https://travis-ci.org/brianfrankcooper/YCSB.png?branch=master)](https://travis-ci.org/brianfrankcooper/YCSB)
+Yahoo! Cloud System Benchmark - with Replay Workload (YCSB-replay)
+==================================================================
+Overview
+--------
+YCSB-replay is a project to improve the Yahoo! Cloud System Benchmark (YCSB) by including the option to reproduce a realistic workload by reading a file of traces.
 
-Links
+Links about Yahoo! Cloud System Benchmark (YCSB)
 -----
+Information and source code for the Yahoo! Cloud System Benchmark (YCSB) project can be found in the following links:
+
 http://wiki.github.com/brianfrankcooper/YCSB/  
-http://research.yahoo.com/Web_Information_Management/YCSB/  
-ycsb-users@yahoogroups.com  
+https://github.com/brianfrankcooper/YCSB/
 
 Getting Started
 ---------------
 
-1. Download the latest release of YCSB:
+1. Clone this repository:
 
     ```sh
-    curl -O https://github.com/brianfrankcooper/YCSB/releases/download/0.1.4/ycsb-0.1.4.tar.gz
-    tar xfvz ycsb-0.1.4.tar.gz
-    cd ycsb-0.1.4
+    git clone https://github.com/ebozag/YCSB-replay.git
+    cd YCSB-replay/
     ```
     
-2. Set up a database to benchmark. There is a README file under each binding 
+2.  Build from source
+
+    To build the full distribution, with all database bindings:
+
+    ```sh
+    mvn clean package
+    ```
+
+    To build a single database binding:
+
+    ```sh
+    mvn -pl com.yahoo.ycsb:mongodb-binding -am clean package
+    ```
+
+3. Set up a database to benchmark. There is a README file under each binding 
    directory.
 
-3. Run YCSB command. 
+4. Set up the configuration file for YSCB-replay. There is a template configuration file in workloads/workload-rp. The main configuration lines are:
+
+   workload=com.yahoo.ycsb.workloads.ReplayWorkload
+   tracefile=workloads/<trace filename>
+
+5. Run YCSB-replay command. 
     
     ```sh
-    bin/ycsb load basic -P workloads/workloada
-    bin/ycsb run basic -P workloads/workloada
+    bin/ycsb load basic -P workloads/workload-rp
+    bin/ycsb run basic -P workloads/workload-rp
     ```
 
-  Running the `ycsb` command without any argument will print the usage. 
-   
-  See https://github.com/brianfrankcooper/YCSB/wiki/Running-a-Workload
-  for a detailed documentation on how to run a workload.
-
-  See https://github.com/brianfrankcooper/YCSB/wiki/Core-Properties for 
-  the list of available workload properties.
-
-Building from source
---------------------
-
-To build the full distribution, with all database bindings:
-
-    mvn clean package
-
-To build a single database binding:
-
-    mvn -pl com.yahoo.ycsb:mongodb-binding -am clean package

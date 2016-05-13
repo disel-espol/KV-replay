@@ -1,9 +1,3 @@
-Yahoo! Cloud System Benchmark - With Replay Workload (YCSB-rp)
-==============================================================
-Overview
---------
-The goal of this work is to modify the YSCB project to include the trace-driven workload option.
-
 Yahoo! Cloud System Benchmark (YCSB)
 ====================================
 [![Build Status](https://travis-ci.org/brianfrankcooper/YCSB.png?branch=master)](https://travis-ci.org/brianfrankcooper/YCSB)
