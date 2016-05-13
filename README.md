@@ -2,7 +2,7 @@ Yahoo! Cloud System Benchmark - with Replay Workload (YCSB-replay)
 ==================================================================
 Overview
 --------
-YCSB-replay is a project to improve the Yahoo! Cloud System Benchmark (YCSB) by including the option to reproduce a realistic workload by reading a file of traces.
+YCSB-replay is a project to extend the Yahoo! Cloud System Benchmark (YCSB) by including the option to reproduce a realistic workload by reading a file of traces.
 
 Links about Yahoo! Cloud System Benchmark (YCSB)
 -----
