@@ -36,7 +36,17 @@ insertproportion=0
 
 requestdistribution=zipfian
 
-tracefile=workloads/parsedFile-Youtube-MERGED-DUPLICATED-5m.dat
+#tracefile=workloads/parsedFile-Youtube-MERGED-DUPLICATED-5m.dat
+#tracefile=workloads/workload-rpYoutube.dat
+tracefile=workloads/workload-rpYoutube-012908-withTimestamp-5k.dat
+#tracefile=workloads/workload-rpYoutube-012908-withTimestamp-withSleep-5k.dat
 
-# EBG - 07/12/2015 - Added a flag for chache behaviour of the DB.
+# EBG - 07/12/2015 - Added a flag for cache behaviour of the DB.
 ascache=true
+
+# EBG - 20160604 - Added a flag for reading timestamp from file
+withtimestamp=true
+
+# EBG - 20160610 - Added a flag for reading "sleep" time from file
+#withsleep=true
+withsleep=false

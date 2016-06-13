@@ -173,6 +173,33 @@ public class ReplayWorkload extends Workload
 
 	boolean ascache;
 
+	/**
+	 * The name of the property for deciding if use the timestamp/delays from the tracefile, default is false.
+	 */
+	public static final String WITH_TIMESTAMP_PROPERTY="withtimestamp";
+	
+	/**
+	 * The default value for the withtimestamp property.
+	 */
+	public static final String WITH_TIMESTAMP_PROPERTY_DEFAULT="false";
+
+	boolean withtimestamp;
+
+	// EBG - 20160604 - Variable to keep the previous timestamp
+	long prevtimestamp;
+	
+	// EBG - 20160613
+	/**
+	 * The name of the property for deciding if use the sleep times are precomputed in the tracefile, default is true.
+	 */
+	public static final String WITH_SLEEP_PROPERTY="withsleep";
+	
+	/**
+	 * The default value for the withsleep property.
+	 */
+	public static final String WITH_SLEEP_PROPERTY_DEFAULT="true";
+
+	boolean withsleep;
 
   /**
    * The name of the property for deciding whether to check all returned
@@ -386,7 +413,11 @@ public class ReplayWorkload extends Workload
 		readallfields=Boolean.parseBoolean(p.getProperty(READ_ALL_FIELDS_PROPERTY,READ_ALL_FIELDS_PROPERTY_DEFAULT));
 		writeallfields=Boolean.parseBoolean(p.getProperty(WRITE_ALL_FIELDS_PROPERTY,WRITE_ALL_FIELDS_PROPERTY_DEFAULT));
 
+		// EBG - 2016-06-04
+		// Properties for cache behaviour and for using timestamp from tracefile
 		ascache=Boolean.parseBoolean(p.getProperty(AS_CACHE_PROPERTY,AS_CACHE_PROPERTY_DEFAULT));
+		withtimestamp=Boolean.parseBoolean(p.getProperty(WITH_TIMESTAMP_PROPERTY,WITH_TIMESTAMP_PROPERTY_DEFAULT));
+		withsleep=Boolean.parseBoolean(p.getProperty(WITH_SLEEP_PROPERTY,WITH_SLEEP_PROPERTY_DEFAULT));
 		
     		dataintegrity = Boolean.parseBoolean(p.getProperty(DATA_INTEGRITY_PROPERTY, DATA_INTEGRITY_PROPERTY_DEFAULT));
     		//Confirm that fieldlengthgenerator returns a constant if data
@@ -499,8 +530,17 @@ public class ReplayWorkload extends Workload
     		  System.exit(-1);
     		}
 		String traceFilename=p.getProperty("tracefile");
+                String[] trace = null;
 		try{
 			tracefile = new BufferedReader(new FileReader(traceFilename));
+                        // EBG - 20160405 - TO DO - IMPROVE
+                        // I read the tracefile, take the first timestamp, and then reset the BufferedReader
+			trace = tracefile.readLine().split(",");
+                	double firsttimestamp = Double.valueOf(trace[2]);
+			prevtimestamp = (long) (firsttimestamp*1000);
+			tracefile = new BufferedReader(new FileReader(traceFilename));
+			System.out.println(prevtimestamp);
+
                 }catch(Exception e){
                         //e.printStackTrace();
     		        System.err.println("Error with the tracefile.");
@@ -589,6 +629,8 @@ public class ReplayWorkload extends Workload
 			}
 		}
 		String dbkey = trace[1];
+
+		// EBG - 20160604 - ADD DELAY HERE IF WITH_TIMESTAMP IS ENABLED
 		HashMap<String, ByteIterator> values = buildValues(dbkey);
 		if (db.insert(table,dbkey,values) == 0)
 			return true;
@@ -614,6 +656,30 @@ public class ReplayWorkload extends Workload
 		}
 		String op = trace[0];
 		String dbkey = trace[1];
+		long sleeptime = 0;
+		// EBG - 20160604
+		// If "withtimestamp" is enabled, pause before sending the next request.
+		if (withtimestamp) {
+		   if (withsleep) 
+		   {
+			sleeptime = Long.valueOf(trace[2]);
+		   }
+		   else
+		   {
+			// EBG - 20160606 - Calculate the right delay
+                	double timestamp = Double.valueOf(trace[2]);
+                   	long newtimestamp = (long) (timestamp*1000);
+		   	sleeptime = newtimestamp - prevtimestamp;
+		   	prevtimestamp = newtimestamp;
+		   }
+		   System.out.println("Delay: " + sleeptime);
+                   try{	
+			Thread.sleep(sleeptime);
+	           }catch(InterruptedException e){
+                                e.printStackTrace();
+                   }
+		   //System.out.println(prevtimestamp);
+                }
 
 
 		if (op.compareTo("READ")==0)
