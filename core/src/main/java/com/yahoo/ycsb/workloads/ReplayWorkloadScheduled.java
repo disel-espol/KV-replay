@@ -44,11 +44,10 @@ import java.util.ArrayList;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
-/**
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
- */
+
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * The core benchmark scenario. Represents a set of clients doing simple CRUD operations. The relative 
@@ -200,6 +199,16 @@ public class ReplayWorkloadScheduled extends Workload
 	public static final String WITH_SLEEP_PROPERTY_DEFAULT="true";
 
 	boolean withsleep;
+
+	/**
+	 * ScheduledExecutorService object to schedule the rquests.
+	 */
+	//private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(20);
+
+	private long startTime = -1;
+	private long currentTime = -1;
+	private long sleeptime = 0;
+
 
   /**
    * The name of the property for deciding whether to check all returned
@@ -540,6 +549,8 @@ public class ReplayWorkloadScheduled extends Workload
 			prevtimestamp = (long) (firsttimestamp*1000);
 			tracefile = new BufferedReader(new FileReader(traceFilename));
 			System.out.println(prevtimestamp);
+		        startTime = System.currentTimeMillis();
+			currentTime = System.currentTimeMillis();
 
                 }catch(Exception e){
                         //e.printStackTrace();
@@ -646,7 +657,10 @@ public class ReplayWorkloadScheduled extends Workload
 	public boolean doTransaction(DB db, Object threadstate)
 	{
 		String[] trace = null;
+		ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(20);
+		
 		ScheduledEvent event;
+		
 		synchronized(this){
 			try{
 				trace = tracefile.readLine().split(",");
@@ -658,14 +672,15 @@ public class ReplayWorkloadScheduled extends Workload
 		String dbkey = trace[1];
 		// EBG - 20160604
 		// If "withtimestamp" is enabled, pause before sending the next request.
-		long sleeptime = 0;
+		// long sleeptime = 0;
+		long delay = 0;
 		if (withtimestamp) {
 		   if (withsleep) 
 		   {
 			// EBG - 20160613
 			// If "withsleep" is enabled, the the sleep time directly from the trace file.
 		   	System.out.println("With Sleep");
-			sleeptime = Long.valueOf(trace[2]);
+			sleeptime += Long.valueOf(trace[2]);
 		   }
 		   else
 		   {
@@ -674,15 +689,19 @@ public class ReplayWorkloadScheduled extends Workload
 		   	System.out.println("With Timestamp");
                 	double timestamp = Double.valueOf(trace[2]);
                    	long newtimestamp = (long) (timestamp*1000);
-		   	sleeptime = newtimestamp - prevtimestamp;
+		   	sleeptime += newtimestamp - prevtimestamp;
 		   	prevtimestamp = newtimestamp;
 		   }
 		   System.out.println("Delay: " + sleeptime);
-                   try{	
-			Thread.sleep(sleeptime);
-	           }catch(InterruptedException e){
-                                e.printStackTrace();
-                   }
+		   currentTime = System.currentTimeMillis();
+		   //// TO FIX - EBG - Check the delay 
+		   delay = sleeptime - (currentTime-startTime);
+		   System.out.println("Real delay: " + delay);
+                //   try{	
+		//	Thread.sleep(sleeptime);
+	        //   }catch(InterruptedException e){
+                //                e.printStackTrace();
+                //   }
                 }
 
 		/* ------
@@ -726,8 +745,10 @@ public class ReplayWorkloadScheduled extends Workload
 			doTransactionReadModifyWrite(db,dbkey);
 		}
 		*/
-		event = new ScheduledEvent(db, op, dbkey);
-		event.run();
+		//event = new ScheduledEvent(db, op, dbkey);
+		//event.run();
+		scheduler.schedule(new ScheduledEvent(db, op, dbkey), delay, TimeUnit.MILLISECONDS);
+		scheduler.shutdown();
 		return true;
 	}
 
