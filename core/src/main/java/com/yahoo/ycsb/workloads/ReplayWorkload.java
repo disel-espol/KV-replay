@@ -630,7 +630,6 @@ public class ReplayWorkload extends Workload
 		}
 		String dbkey = trace[1];
 
-		// EBG - 20160604 - ADD DELAY HERE IF WITH_TIMESTAMP IS ENABLED
 		HashMap<String, ByteIterator> values = buildValues(dbkey);
 		if (db.insert(table,dbkey,values) == 0)
 			return true;
@@ -656,17 +655,22 @@ public class ReplayWorkload extends Workload
 		}
 		String op = trace[0];
 		String dbkey = trace[1];
-		long sleeptime = 0;
 		// EBG - 20160604
 		// If "withtimestamp" is enabled, pause before sending the next request.
+		long sleeptime = 0;
 		if (withtimestamp) {
 		   if (withsleep) 
 		   {
+			// EBG - 20160613
+			// If "withsleep" is enabled, the the sleep time directly from the trace file.
+		   	System.out.println("With Sleep");
 			sleeptime = Long.valueOf(trace[2]);
 		   }
 		   else
 		   {
-			// EBG - 20160606 - Calculate the right delay
+			// EBG - 20160606
+			// Calculate the sleep time by subtracting the timestamps from the tracefile.
+		   	System.out.println("With Timestamp");
                 	double timestamp = Double.valueOf(trace[2]);
                    	long newtimestamp = (long) (timestamp*1000);
 		   	sleeptime = newtimestamp - prevtimestamp;
@@ -678,8 +682,24 @@ public class ReplayWorkload extends Workload
 	           }catch(InterruptedException e){
                                 e.printStackTrace();
                    }
-		   //System.out.println(prevtimestamp);
                 }
+
+		/* ------
+		if (withtimestamp) {
+			// EBG - 20160606
+			// Calculate the sleep time by subtracting the timestamps from the tracefile.
+                	double timestamp = Double.valueOf(trace[2]);
+                   	long newtimestamp = (long) (timestamp*1000);
+                   try{	
+			Thread.sleep(newtimestamp-prevtimestamp);
+		   	System.out.println("Timestamp: " + prevtimestamp);
+		   	System.out.println("Delay: " + (newtimestamp-prevtimestamp));
+	           }catch(InterruptedException e){
+                                e.printStackTrace();
+                   }
+		   prevtimestamp = newtimestamp;
+                }
+		--- */
 
 
 		if (op.compareTo("READ")==0)
