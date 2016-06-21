@@ -186,7 +186,8 @@ public class ReplayWorkload extends Workload
 	boolean withtimestamp;
 
 	// EBG - 20160604 - Variable to keep the previous timestamp
-	long prevtimestamp;
+	// long prevtimestamp;
+	double prevtimestamp;
 	
 	// EBG - 20160613
 	/**
@@ -537,7 +538,8 @@ public class ReplayWorkload extends Workload
                         // I read the tracefile, take the first timestamp, and then reset the BufferedReader
 			trace = tracefile.readLine().split(",");
                 	double firsttimestamp = Double.valueOf(trace[2]);
-			prevtimestamp = (long) (firsttimestamp*1000);
+			//prevtimestamp = (long) (firsttimestamp*1000);
+			prevtimestamp = firsttimestamp*1000;
 			tracefile = new BufferedReader(new FileReader(traceFilename));
 			System.out.println(prevtimestamp);
 
@@ -671,9 +673,11 @@ public class ReplayWorkload extends Workload
 			// EBG - 20160606
 			// Calculate the sleep time by subtracting the timestamps from the tracefile.
 		   	System.out.println("With Timestamp");
-                	double timestamp = Double.valueOf(trace[2]);
-                   	long newtimestamp = (long) (timestamp*1000);
-		   	sleeptime = newtimestamp - prevtimestamp;
+                	//double timestamp = Double.valueOf(trace[2]);
+                   	//long newtimestamp = (long) (timestamp*1000);
+		   	//sleeptime = newtimestamp - prevtimestamp;
+                	double newtimestamp = (Double.valueOf(trace[2]))*1000;
+		   	sleeptime = Math.round(newtimestamp - prevtimestamp);
 		   	prevtimestamp = newtimestamp;
 		   }
 		   System.out.println("Delay: " + sleeptime);
