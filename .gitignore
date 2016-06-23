@@ -10,8 +10,10 @@ output*
 .settings
 
 # ignore tracefiles (too big)
-workloads/parsedFile-Youtube-MERGED-DUPLICATED-5m.dat
-workloads/parsedFile-tracefile-OutputFromRedis.dat
+workloads/*.dat
+
+# ignore log files from testing (too big)
+log-*
 
 # ignore d.dat file (output from run)
 d.dat

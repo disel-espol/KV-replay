@@ -203,7 +203,7 @@ public class ReplayWorkloadScheduled extends Workload
 	/**
 	 * ScheduledExecutorService object to schedule the rquests.
 	 */
-	//private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(20);
+	private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(20);
 
 	private long startTime = -1;
 	private long currentTime = -1;
@@ -657,7 +657,7 @@ public class ReplayWorkloadScheduled extends Workload
 	public boolean doTransaction(DB db, Object threadstate)
 	{
 		String[] trace = null;
-		ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(20);
+		//ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(20);
 		
 		ScheduledEvent event;
 		
@@ -748,7 +748,7 @@ public class ReplayWorkloadScheduled extends Workload
 		//event = new ScheduledEvent(db, op, dbkey);
 		//event.run();
 		scheduler.schedule(new ScheduledEvent(db, op, dbkey), delay, TimeUnit.MILLISECONDS);
-		scheduler.shutdown();
+		//scheduler.shutdown();
 		return true;
 	}
 
@@ -791,6 +791,18 @@ public class ReplayWorkloadScheduled extends Workload
                 }
 	    } 
 	}
+
+	/* Method to run a shutdown for the scheduler */
+	public void shutdownScheduler() {
+		scheduler.shutdown();
+ 	}
+
+	/* Method to check if the scheduler is terminated */
+	public boolean isSchedulerTerminated() {
+		return scheduler.isTerminated();
+ 	}
+
+
 
   /**
    * Results are reported in the first three buckets of the histogram under

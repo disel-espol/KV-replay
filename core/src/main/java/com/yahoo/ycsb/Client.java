@@ -241,6 +241,18 @@ class ClientThread extends Thread
 
 					throttleNanos(startTimeNanos);
 				}
+				// Sent to shutdown the Scheduler
+				_workload.shutdownScheduler();
+			
+				// Check if the Scheduler is finished
+				while (!_workload.isSchedulerTerminated())
+				{
+					try{
+						Thread.sleep(10000);
+					}catch(InterruptedException e){
+						e.printStackTrace();
+					}
+				}
 			}
 			else
 			{
