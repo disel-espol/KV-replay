@@ -115,5 +115,6 @@ public abstract class Workload
         public boolean isSchedulerTerminated() {
 		return true;
 	}
-
+        public void setStartTime() {
+	}
 }

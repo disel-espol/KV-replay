@@ -185,7 +185,8 @@ public class ReplayWorkloadScheduled extends Workload
 	boolean withtimestamp;
 
 	// EBG - 20160604 - Variable to keep the previous timestamp
-	long prevtimestamp;
+	//long prevtimestamp;
+        double prevtimestamp;
 	
 	// EBG - 20160613
 	/**
@@ -546,10 +547,11 @@ public class ReplayWorkloadScheduled extends Workload
                         // I read the tracefile, take the first timestamp, and then reset the BufferedReader
 			trace = tracefile.readLine().split(",");
                 	double firsttimestamp = Double.valueOf(trace[2]);
-			prevtimestamp = (long) (firsttimestamp*1000);
+			//prevtimestamp = (long) (firsttimestamp*1000);
+                        prevtimestamp = firsttimestamp*1000;
 			tracefile = new BufferedReader(new FileReader(traceFilename));
 			System.out.println(prevtimestamp);
-		        startTime = System.currentTimeMillis();
+		        //startTime = System.currentTimeMillis();
 			currentTime = System.currentTimeMillis();
 
                 }catch(Exception e){
@@ -657,10 +659,8 @@ public class ReplayWorkloadScheduled extends Workload
 	public boolean doTransaction(DB db, Object threadstate)
 	{
 		String[] trace = null;
-		//ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(20);
-		
 		ScheduledEvent event;
-		
+		// Read the record from the tracefile
 		synchronized(this){
 			try{
 				trace = tracefile.readLine().split(",");
@@ -668,8 +668,10 @@ public class ReplayWorkloadScheduled extends Workload
 				e.printStackTrace();
 			}
 		}
+		// The first value is the operation, the second value is the object ID, and the third value is the timestamp or delay
 		String op = trace[0];
 		String dbkey = trace[1];
+
 		// EBG - 20160604
 		// If "withtimestamp" is enabled, pause before sending the next request.
 		// long sleeptime = 0;
@@ -687,68 +689,21 @@ public class ReplayWorkloadScheduled extends Workload
 			// EBG - 20160606
 			// Calculate the sleep time by subtracting the timestamps from the tracefile.
 		   	System.out.println("With Timestamp");
-                	double timestamp = Double.valueOf(trace[2]);
-                   	long newtimestamp = (long) (timestamp*1000);
-		   	sleeptime += newtimestamp - prevtimestamp;
-		   	prevtimestamp = newtimestamp;
+                        double newtimestamp = (Double.valueOf(trace[2]))*1000;
+                        sleeptime = Math.round(newtimestamp - prevtimestamp);
+                        prevtimestamp = newtimestamp;
 		   }
+
 		   System.out.println("Delay: " + sleeptime);
 		   currentTime = System.currentTimeMillis();
 		   //// TO FIX - EBG - Check the delay 
 		   delay = sleeptime - (currentTime-startTime);
 		   System.out.println("Real delay: " + delay);
-                //   try{	
-		//	Thread.sleep(sleeptime);
-	        //   }catch(InterruptedException e){
-                //                e.printStackTrace();
-                //   }
                 }
 
-		/* ------
-		if (withtimestamp) {
-			// EBG - 20160606
-			// Calculate the sleep time by subtracting the timestamps from the tracefile.
-                	double timestamp = Double.valueOf(trace[2]);
-                   	long newtimestamp = (long) (timestamp*1000);
-                   try{	
-			Thread.sleep(newtimestamp-prevtimestamp);
-		   	System.out.println("Timestamp: " + prevtimestamp);
-		   	System.out.println("Delay: " + (newtimestamp-prevtimestamp));
-	           }catch(InterruptedException e){
-                                e.printStackTrace();
-                   }
-		   prevtimestamp = newtimestamp;
-                }
-		--- */
-
-		/* ----
-		 * Moved this code to a class
-		 *
-		if (op.compareTo("READ")==0)
-		{
-			doTransactionRead(db,dbkey);
-		}
-		else if (op.compareTo("UPDATE")==0)
-		{
-			doTransactionUpdate(db,dbkey);
-		}
-		else if (op.compareTo("INSERT")==0)
-		{
-			doTransactionInsert(db,dbkey);
-		}
-		else if (op.compareTo("SCAN")==0)
-		{
-			doTransactionScan(db,dbkey);
-		}
-		else
-		{
-			doTransactionReadModifyWrite(db,dbkey);
-		}
-		*/
-		//event = new ScheduledEvent(db, op, dbkey);
-		//event.run();
+		// Schedule the event
 		scheduler.schedule(new ScheduledEvent(db, op, dbkey), delay, TimeUnit.MILLISECONDS);
-		//scheduler.shutdown();
+
 		return true;
 	}
 
@@ -800,6 +755,11 @@ public class ReplayWorkloadScheduled extends Workload
 	/* Method to check if the scheduler is terminated */
 	public boolean isSchedulerTerminated() {
 		return scheduler.isTerminated();
+ 	}
+
+	/* Method to check if the scheduler is terminated */
+	public void setStartTime() {
+		startTime = System.currentTimeMillis();
  	}
 
 

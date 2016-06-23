@@ -228,6 +228,7 @@ class ClientThread extends Thread
 			if (_dotransactions)
 			{
 			    long startTimeNanos = System.nanoTime();
+				_workload.setStartTime();
 
 				while (((_opcount == 0) || (_opsdone < _opcount)) && !_workload.isStopRequested())
 				{
