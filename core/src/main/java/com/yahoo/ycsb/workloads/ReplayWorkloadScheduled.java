@@ -204,7 +204,7 @@ public class ReplayWorkloadScheduled extends Workload
 	/**
 	 * ScheduledExecutorService object to schedule the rquests.
 	 */
-	private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(20);
+	private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(200);
 
 	private long startTime = -1;
 	private long currentTime = -1;
@@ -550,7 +550,7 @@ public class ReplayWorkloadScheduled extends Workload
 			//prevtimestamp = (long) (firsttimestamp*1000);
                         prevtimestamp = firsttimestamp*1000;
 			tracefile = new BufferedReader(new FileReader(traceFilename));
-			System.out.println(prevtimestamp);
+			//System.out.println(prevtimestamp);
 		        //startTime = System.currentTimeMillis();
 			currentTime = System.currentTimeMillis();
 
@@ -681,24 +681,22 @@ public class ReplayWorkloadScheduled extends Workload
 		   {
 			// EBG - 20160613
 			// If "withsleep" is enabled, the the sleep time directly from the trace file.
-		   	System.out.println("With Sleep");
 			sleeptime += Long.valueOf(trace[2]);
 		   }
 		   else
 		   {
 			// EBG - 20160606
 			// Calculate the sleep time by subtracting the timestamps from the tracefile.
-		   	System.out.println("With Timestamp");
                         double newtimestamp = (Double.valueOf(trace[2]))*1000;
-                        sleeptime = Math.round(newtimestamp - prevtimestamp);
+                        sleeptime += Math.round(newtimestamp - prevtimestamp);
                         prevtimestamp = newtimestamp;
 		   }
 
-		   System.out.println("Delay: " + sleeptime);
+		   //System.out.println("Delay: " + sleeptime);
 		   currentTime = System.currentTimeMillis();
-		   //// TO FIX - EBG - Check the delay 
+		   //// TO IMPROVE - EBG - Check the delay 
 		   delay = sleeptime - (currentTime-startTime);
-		   System.out.println("Real delay: " + delay);
+		   //System.out.println("Real delay: " + delay);
                 }
 
 		// Schedule the event
@@ -726,7 +724,8 @@ public class ReplayWorkloadScheduled extends Workload
 	    public void run() {
                 if (op.compareTo("READ")==0)
                 {
-                        doTransactionRead(db,dbkey);
+			//System.out.println("DBKey: " + dbkey);
+                	doTransactionRead(db,dbkey);
                 }
                 else if (op.compareTo("UPDATE")==0)
                 {

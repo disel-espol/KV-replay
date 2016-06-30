@@ -541,7 +541,7 @@ public class ReplayWorkload extends Workload
 			//prevtimestamp = (long) (firsttimestamp*1000);
 			prevtimestamp = firsttimestamp*1000;
 			tracefile = new BufferedReader(new FileReader(traceFilename));
-			System.out.println(prevtimestamp);
+			//System.out.println(prevtimestamp);
 
                 }catch(Exception e){
                         //e.printStackTrace();
@@ -665,46 +665,23 @@ public class ReplayWorkload extends Workload
 		   {
 			// EBG - 20160613
 			// If "withsleep" is enabled, the the sleep time directly from the trace file.
-		   	System.out.println("With Sleep");
 			sleeptime = Long.valueOf(trace[2]);
 		   }
 		   else
 		   {
 			// EBG - 20160606
 			// Calculate the sleep time by subtracting the timestamps from the tracefile.
-		   	System.out.println("With Timestamp");
-                	//double timestamp = Double.valueOf(trace[2]);
-                   	//long newtimestamp = (long) (timestamp*1000);
-		   	//sleeptime = newtimestamp - prevtimestamp;
                 	double newtimestamp = (Double.valueOf(trace[2]))*1000;
 		   	sleeptime = Math.round(newtimestamp - prevtimestamp);
 		   	prevtimestamp = newtimestamp;
 		   }
-		   System.out.println("Delay: " + sleeptime);
+		   //System.out.println("Delay: " + sleeptime);
                    try{	
 			Thread.sleep(sleeptime);
 	           }catch(InterruptedException e){
                                 e.printStackTrace();
                    }
                 }
-
-		/* ------
-		if (withtimestamp) {
-			// EBG - 20160606
-			// Calculate the sleep time by subtracting the timestamps from the tracefile.
-                	double timestamp = Double.valueOf(trace[2]);
-                   	long newtimestamp = (long) (timestamp*1000);
-                   try{	
-			Thread.sleep(newtimestamp-prevtimestamp);
-		   	System.out.println("Timestamp: " + prevtimestamp);
-		   	System.out.println("Delay: " + (newtimestamp-prevtimestamp));
-	           }catch(InterruptedException e){
-                                e.printStackTrace();
-                   }
-		   prevtimestamp = newtimestamp;
-                }
-		--- */
-
 
 		if (op.compareTo("READ")==0)
 		{

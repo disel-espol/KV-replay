@@ -22,9 +22,12 @@
 #   Request distribution: zipfian
 
 #recordcount=1000
-recordcount=100
+#recordcount=100
 #operationcount=1000
-operationcount=100
+#operationcount=100
+recordcount=1100
+operationcount=1100
+
 #workload=com.yahoo.ycsb.workloads.CoreWorkload
 #EBG - 07/01/2105 - Changed to call the new workload class: ReplayWorkload
 workload=com.yahoo.ycsb.workloads.ReplayWorkload
