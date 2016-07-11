@@ -54,3 +54,8 @@ withtimestamp=true
 # EBG - 20160610 - Added a flag for reading "sleep" time from file
 withsleep=true
 #withsleep=false
+
+# EBG - 20160701 - Added conversion factor for timestamp: 1 - when timestamp in trace is in miliseconds
+# 1000 when timestamp in trace is in seconds. Default: 1
+#timestampfactor=1000
+timestampfactor=1

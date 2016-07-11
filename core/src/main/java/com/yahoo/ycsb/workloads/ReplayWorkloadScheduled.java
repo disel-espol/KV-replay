@@ -49,6 +49,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import java.sql.Timestamp;
+
 /**
  * The core benchmark scenario. Represents a set of clients doing simple CRUD operations. The relative 
  * proportion of different kinds of operations, and other properties of the workload, are controlled
@@ -183,6 +185,19 @@ public class ReplayWorkloadScheduled extends Workload
 	public static final String WITH_TIMESTAMP_PROPERTY_DEFAULT="false";
 
 	boolean withtimestamp;
+
+	/**
+	 * The name of the property for conversion factor for timestamp: 1 - when timestamp in trace is in miliseconds,
+	 * 1000 when timestamp in trace is in seconds. Default: 1
+	 */
+	public static final String TIMESTAMP_FACTOR_PROPERTY="timestampfactor";
+	
+	/**
+	 * The default value for the timestampfactor property.
+	 */
+	public static final String TIMESTAMP_FACTOR_PROPERTY_DEFAULT="1";
+
+	int timestampfactor;
 
 	// EBG - 20160604 - Variable to keep the previous timestamp
 	//long prevtimestamp;
@@ -428,6 +443,7 @@ public class ReplayWorkloadScheduled extends Workload
 		ascache=Boolean.parseBoolean(p.getProperty(AS_CACHE_PROPERTY,AS_CACHE_PROPERTY_DEFAULT));
 		withtimestamp=Boolean.parseBoolean(p.getProperty(WITH_TIMESTAMP_PROPERTY,WITH_TIMESTAMP_PROPERTY_DEFAULT));
 		withsleep=Boolean.parseBoolean(p.getProperty(WITH_SLEEP_PROPERTY,WITH_SLEEP_PROPERTY_DEFAULT));
+		timestampfactor=Integer.parseInt(p.getProperty(TIMESTAMP_FACTOR_PROPERTY,TIMESTAMP_FACTOR_PROPERTY_DEFAULT));
 		
     		dataintegrity = Boolean.parseBoolean(p.getProperty(DATA_INTEGRITY_PROPERTY, DATA_INTEGRITY_PROPERTY_DEFAULT));
     		//Confirm that fieldlengthgenerator returns a constant if data
@@ -547,8 +563,8 @@ public class ReplayWorkloadScheduled extends Workload
                         // I read the tracefile, take the first timestamp, and then reset the BufferedReader
 			trace = tracefile.readLine().split(",");
                 	double firsttimestamp = Double.valueOf(trace[2]);
-			//prevtimestamp = (long) (firsttimestamp*1000);
-                        prevtimestamp = firsttimestamp*1000;
+			//prevtimestamp = (long) (firsttimestamp*timestampfactor);
+                        prevtimestamp = firsttimestamp*timestampfactor;
 			tracefile = new BufferedReader(new FileReader(traceFilename));
 			//System.out.println(prevtimestamp);
 		        //startTime = System.currentTimeMillis();
@@ -664,6 +680,9 @@ public class ReplayWorkloadScheduled extends Workload
 		synchronized(this){
 			try{
 				trace = tracefile.readLine().split(",");
+			//	for (int i = 0; i < 10; i++) {
+			//		tracefile.readLine();
+			//	}
 			}catch(Exception e){
 				e.printStackTrace();
 			}
@@ -687,7 +706,7 @@ public class ReplayWorkloadScheduled extends Workload
 		   {
 			// EBG - 20160606
 			// Calculate the sleep time by subtracting the timestamps from the tracefile.
-                        double newtimestamp = (Double.valueOf(trace[2]))*1000;
+                        double newtimestamp = (Double.valueOf(trace[2]))*timestampfactor;
                         sleeptime += Math.round(newtimestamp - prevtimestamp);
                         prevtimestamp = newtimestamp;
 		   }
@@ -724,8 +743,8 @@ public class ReplayWorkloadScheduled extends Workload
 	    public void run() {
                 if (op.compareTo("READ")==0)
                 {
-			//System.out.println("DBKey: " + dbkey);
                 	doTransactionRead(db,dbkey);
+			System.out.println(new Timestamp(System.currentTimeMillis()) + "," + dbkey);
                 }
                 else if (op.compareTo("UPDATE")==0)
                 {
