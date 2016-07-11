@@ -25,8 +25,8 @@ Getting Started
 3. Run YCSB command. 
     
     ```sh
-    bin/ycsb load basic -P workloads/workloada
-    bin/ycsb run basic -P workloads/workloada
+    bin/ycsb load basic -P workloads/workload-replay_template
+    bin/ycsb run basic -P workloads/workload-replay_template
     ```
 
   Running the `ycsb` command without any argument will print the usage. 
