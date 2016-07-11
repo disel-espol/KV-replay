@@ -13,9 +13,9 @@
 # permissions and limitations under the License. See accompanying                                                                                                                 
 # LICENSE file.                                                                                                                                                                   
 
-# Yahoo! Cloud System Benchmark
-# Workload C: Read only
-#   Application example: user profile cache, where profiles are constructed elsewhere (e.g., Hadoop)
+# YCSB-replay - Yahoo! Cloud System Benchmark with trace replay
+# Workload Replay: Read only
+#   Application example: user profile cache, where profiles are constructed elsewhere (e.g., Redis)
 #                        
 #   Read/update ratio: 100/0
 #   Default data size: 1 KB records (10 fields, 100 bytes each, plus key)
@@ -23,8 +23,9 @@
 
 recordcount=1000
 operationcount=1000
+
+# Changed to call the new workload class: ReplayWorkload
 #workload=com.yahoo.ycsb.workloads.CoreWorkload
-#EBG - 07/01/2105 - Changed to call the new workload class: ReplayWorkload
 workload=com.yahoo.ycsb.workloads.ReplayWorkload
 
 readallfields=true
@@ -36,8 +37,8 @@ insertproportion=0
 
 requestdistribution=zipfian
 
-# EBG - 07/02/2015 - Added the path and name of tracefile.
-tracefile=workloads/workload-rpYoutube.dat
+# Call the file with traces
+tracefile=workloads/workload-replay_example-tracefile.dat
 
-# EBG - 07/12/2015 - Added a flag for chache behaviour of the DB.
+# Flag for chache behaviour of the DB.
 ascache=true
