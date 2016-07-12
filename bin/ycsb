@@ -25,6 +25,11 @@ COMMANDS = {
         "description" : "Execute the transaction phase",
         "main"        : "com.yahoo.ycsb.Client",
     },
+    "runmulti" : {
+        "command"     : "-t",
+        "description" : "Execute the transaction phase with Multi Instances",
+        "main"        : "com.yahoo.ycsb.ClientMulti",
+    },
 }
 
 DATABASES = {

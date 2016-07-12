@@ -43,7 +43,7 @@ import com.yahoo.ycsb.measurements.exporter.TextMeasurementsExporter;
  * @author cooperb
  *
  */
-class StatusThread extends Thread
+class StatusThreadMulti extends Thread
 {
 	Vector<Thread> _threads;
 	String _label;
@@ -54,7 +54,7 @@ class StatusThread extends Thread
 	 */
 	long _sleeptimeNs;
 
-	public StatusThread(Vector<Thread> threads, String label, boolean standardstatus, int statusIntervalSeconds)
+	public StatusThreadMulti(Vector<Thread> threads, String label, boolean standardstatus, int statusIntervalSeconds)
 	{
 		_threads=threads;
 		_label=label;
@@ -90,7 +90,7 @@ class StatusThread extends Thread
 					alldone=false;
 				}
 
-				ClientThread ct=(ClientThread)t;
+				ClientMultiThread ct=(ClientMultiThread)t;
 				totalops+=ct.getOpsDone();
 			}
 
@@ -122,7 +122,7 @@ class StatusThread extends Thread
 				System.out.println(msg);
 			}
 
-			ClientThread.sleepUntil(deadline);
+			ClientMultiThread.sleepUntil(deadline);
 			deadline+=_sleeptimeNs;
 		}
 		while (!alldone);
@@ -135,7 +135,7 @@ class StatusThread extends Thread
  * @author cooperb
  *
  */
-class ClientThread extends Thread
+class ClientMultiThread extends Thread
 {
 	private static boolean _spinSleep;
     DB _db;
@@ -164,7 +164,7 @@ class ClientThread extends Thread
 	 * @param opcount the number of operations (transactions or inserts) to do
 	 * @param targetperthreadperms target number of operations per thread per ms
 	 */
-	public ClientThread(DB db, boolean dotransactions, Workload workload, int threadid, int threadcount, Properties props, int opcount, double targetperthreadperms)
+	public ClientMultiThread(DB db, boolean dotransactions, Workload workload, int threadid, int threadcount, Properties props, int opcount, double targetperthreadperms)
 	{
 		//TODO: consider removing threadcount and threadid
 		_db=db;
@@ -317,7 +317,7 @@ class ClientThread extends Thread
 /**
  * Main class for executing YCSB.
  */
-public class Client
+public class ClientMulti
 {
 
 	public static final String DEFAULT_RECORD_COUNT = "0";
@@ -379,7 +379,7 @@ public class Client
 
 	public static void usageMessage()
 	{
-		System.out.println("Usage: java com.yahoo.ycsb.Client [options]");
+		System.out.println("Usage: java com.yahoo.ycsb.ClientMulti [options]");
 		System.out.println("Options:");
 		System.out.println("  -threads n: execute using n threads (default: 1) - can also be specified as the \n" +
 				"              \"threadcount\" property using -p");
@@ -656,7 +656,7 @@ public class Client
 			targetperthreadperms=targetperthread/1000.0;
 		}	 
 
-		System.out.println("YCSB Client 0.1");
+		System.out.println("YCSB ClientMulti 0.1");
 		System.out.print("Command line:");
 		for (int i=0; i<args.length; i++)
 		{
@@ -690,7 +690,7 @@ public class Client
 		Measurements.setProperties(props);
 		
 		//load the workload
-		ClassLoader classLoader = Client.class.getClassLoader();
+		ClassLoader classLoader = ClientMulti.class.getClassLoader();
 
 		Workload workload=null;
 
@@ -756,13 +756,13 @@ public class Client
 			}
 
 			
-            Thread t=new ClientThread(db,dotransactions,workload,threadid,threadcount,props,opcount/threadcount, targetperthreadperms);
+            Thread t=new ClientMultiThread(db,dotransactions,workload,threadid,threadcount,props,opcount/threadcount, targetperthreadperms);
 
 			threads.add(t);
 			//t.start();
 		}
 
-		StatusThread statusthread=null;
+		StatusThreadMulti statusthread=null;
 
 		if (status)
 		{
@@ -772,7 +772,7 @@ public class Client
 				standardstatus=true;
 			}
 			int statusIntervalSeconds = Integer.parseInt(props.getProperty("status.interval","10"));
-			statusthread=new StatusThread(threads,label,standardstatus,statusIntervalSeconds);
+			statusthread=new StatusThreadMulti(threads,label,standardstatus,statusIntervalSeconds);
 			statusthread.start();
 		}
 
@@ -797,7 +797,7 @@ public class Client
 			try
 			{
 				t.join();
-				opsDone += ((ClientThread)t).getOpsDone();
+				opsDone += ((ClientMultiThread)t).getOpsDone();
 			}
 			catch (InterruptedException e)
 			{
