@@ -52,5 +52,5 @@ withsleep=false
 
 # Conversion factor for timestamp: 1 - when timestamp in trace is in miliseconds
 # 1000 when timestamp in trace is in seconds. Default: 1
-#timestampfactor=1000
-timestampfactor=1
+timestampfactor=1000
+#timestampfactor=1
