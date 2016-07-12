@@ -1,0 +1,56 @@
+# Copyright (c) 2010 Yahoo! Inc. All rights reserved.                                                                                                                             
+#                                                                                                                                                                                 
+# Licensed under the Apache License, Version 2.0 (the "License"); you                                                                                                             
+# may not use this file except in compliance with the License. You                                                                                                                
+# may obtain a copy of the License at                                                                                                                                             
+#                                                                                                                                                                                 
+# http://www.apache.org/licenses/LICENSE-2.0                                                                                                                                      
+#                                                                                                                                                                                 
+# Unless required by applicable law or agreed to in writing, software                                                                                                             
+# distributed under the License is distributed on an "AS IS" BASIS,                                                                                                               
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or                                                                                                                 
+# implied. See the License for the specific language governing                                                                                                                    
+# permissions and limitations under the License. See accompanying                                                                                                                 
+# LICENSE file.                                                                                                                                                                   
+
+# Yahoo! Cloud System Benchmark
+# Workload Replay with Scheduler (Open replay Model): Read only
+#   Application example: user profile cache, where profiles are constructed elsewhere (e.g., Redis)
+#                        
+#   Read/update ratio: 100/0
+#   Default data size: 1 KB records (10 fields, 100 bytes each, plus key)
+#   Request distribution: zipfian
+
+recordcount=1100
+operationcount=1100
+
+# Changed to call the new workload class: ReplayWorkloadScheduled
+#workload=com.yahoo.ycsb.workloads.CoreWorkload
+workload=com.yahoo.ycsb.workloads.ReplayWorkloadScheduled
+
+readallfields=true
+
+readproportion=1
+updateproportion=0
+scanproportion=0
+insertproportion=0
+
+requestdistribution=zipfian
+
+# Call the file with traces
+tracefile=workloads/workload-replay_example-tracefile.dat
+
+# Flag for chache behaviour of the DB.
+ascache=true
+
+# Flag for reading timestamp from file
+withtimestamp=true
+
+# Flag for reading "sleep" time from file. If TRUE, read the interarrival or sleep time. If FALSE, read the timestamp.
+#withsleep=true
+withsleep=false
+
+# Conversion factor for timestamp: 1 - when timestamp in trace is in miliseconds
+# 1000 when timestamp in trace is in seconds. Default: 1
+#timestampfactor=1000
+timestampfactor=1
