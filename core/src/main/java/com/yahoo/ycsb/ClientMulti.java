@@ -151,6 +151,7 @@ class ClientMultiThread extends Thread
 	Properties _props;
     long _targetOpsTickNs;
     final Measurements _measurements;
+	int _instances;
 
 	/**
 	 * Constructor.
@@ -164,7 +165,7 @@ class ClientMultiThread extends Thread
 	 * @param opcount the number of operations (transactions or inserts) to do
 	 * @param targetperthreadperms target number of operations per thread per ms
 	 */
-	public ClientMultiThread(DB db, boolean dotransactions, Workload workload, int threadid, int threadcount, Properties props, int opcount, double targetperthreadperms)
+	public ClientMultiThread(DB db, boolean dotransactions, Workload workload, int threadid, int threadcount, Properties props, int opcount, double targetperthreadperms, int instances)
 	{
 		//TODO: consider removing threadcount and threadid
 		_db=db;
@@ -181,6 +182,7 @@ class ClientMultiThread extends Thread
 		_props=props;
 		_measurements = Measurements.getMeasurements();
 		_spinSleep = Boolean.valueOf(_props.getProperty("spin.sleep", "false"));
+		_instances = instances;
 	}
 
 	public int getOpsDone()
@@ -230,7 +232,7 @@ class ClientMultiThread extends Thread
 			    long startTimeNanos = System.nanoTime();
 				_workload.setStartTime();
 
-				while (((_opcount == 0) || (_opsdone < _opcount)) && !_workload.isStopRequested())
+				while (((_opcount == 0) || (_opsdone < _opcount/_instances)) && !_workload.isStopRequested())
 				{
 
 					if (!_workload.doTransaction(_db,_workloadstate))
@@ -269,7 +271,7 @@ class ClientMultiThread extends Thread
 
 					_opsdone++;
 
-					throttleNanos(startTimeNanos);
+					
 				}
 			}
 		}
@@ -321,6 +323,12 @@ public class ClientMulti
 {
 
 	public static final String DEFAULT_RECORD_COUNT = "0";
+
+    /**
+     * The number of instances.
+     */
+	public static final String INSTANCES_PROPERTY="instances";
+
 
     /**
      * The target number of operations to perform.
@@ -724,6 +732,13 @@ public class ClientMulti
 
 		System.err.println("Starting test.");
 
+
+		int instances=1;
+		if (props.containsKey(INSTANCES_PROPERTY))
+		{
+			instances=Integer.parseInt(props.getProperty(INSTANCES_PROPERTY,"1"));
+		}
+
 		int opcount;
 		if (dotransactions)
 		{
@@ -756,7 +771,7 @@ public class ClientMulti
 			}
 
 			
-            Thread t=new ClientMultiThread(db,dotransactions,workload,threadid,threadcount,props,opcount/threadcount, targetperthreadperms);
+            Thread t=new ClientMultiThread(db,dotransactions,workload,threadid,threadcount,props,opcount/threadcount, targetperthreadperms,instances);
 
 			threads.add(t);
 			//t.start();
