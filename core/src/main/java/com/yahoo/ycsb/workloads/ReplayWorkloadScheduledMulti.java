@@ -215,6 +215,31 @@ public class ReplayWorkloadScheduledMulti extends Workload
 	public static final String WITH_SLEEP_PROPERTY_DEFAULT="true";
 
 	boolean withsleep;
+	
+	/**
+	 * The name of the property with the instance ID
+	 */
+	public static final String INSTANCEID_PROPERTY="instanceid";
+	
+	/**
+	 * The default value for the instanceid property.
+	 */
+	public static final String INSTANCEID_PROPERTY_DEFAULT="0";
+
+	int instanceid;
+
+	/**
+	 * The name of the property with the instances number
+	 */
+	public static final String INSTANCES_PROPERTY="instances";
+	
+	/**
+	 * The default value for the instances property.
+	 */
+	public static final String INSTANCES_PROPERTY_DEFAULT="1";
+
+	int instances;
+
 
 	/**
 	 * ScheduledExecutorService object to schedule the rquests.
@@ -566,6 +591,15 @@ public class ReplayWorkloadScheduledMulti extends Workload
 			//prevtimestamp = (long) (firsttimestamp*timestampfactor);
                         prevtimestamp = firsttimestamp*timestampfactor;
 			tracefile = new BufferedReader(new FileReader(traceFilename));
+                	synchronized(this){
+                        try{
+                                for (int i = 0; i < instanceid; i++) {
+                                        tracefile.readLine();
+                                }
+                        }catch(Exception e){
+                                e.printStackTrace();
+                        }
+                }
 			//System.out.println(prevtimestamp);
 		        //startTime = System.currentTimeMillis();
 			currentTime = System.currentTimeMillis();
@@ -680,9 +714,9 @@ public class ReplayWorkloadScheduledMulti extends Workload
 		synchronized(this){
 			try{
 				trace = tracefile.readLine().split(",");
-			//	for (int i = 0; i < 10; i++) {
-			//		tracefile.readLine();
-			//	}
+				for (int i = 0; i < instances; i++) {
+					tracefile.readLine();
+				}
 			}catch(Exception e){
 				e.printStackTrace();
 			}
@@ -743,8 +777,8 @@ public class ReplayWorkloadScheduledMulti extends Workload
 	    public void run() {
                 if (op.compareTo("READ")==0)
                 {
-                	doTransactionRead(db,dbkey);
 			System.out.println(new Timestamp(System.currentTimeMillis()) + "," + dbkey);
+                	doTransactionRead(db,dbkey);
                 }
                 else if (op.compareTo("UPDATE")==0)
                 {
