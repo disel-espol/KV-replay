@@ -469,6 +469,9 @@ public class ReplayWorkloadScheduledMulti extends Workload
 		withtimestamp=Boolean.parseBoolean(p.getProperty(WITH_TIMESTAMP_PROPERTY,WITH_TIMESTAMP_PROPERTY_DEFAULT));
 		withsleep=Boolean.parseBoolean(p.getProperty(WITH_SLEEP_PROPERTY,WITH_SLEEP_PROPERTY_DEFAULT));
 		timestampfactor=Integer.parseInt(p.getProperty(TIMESTAMP_FACTOR_PROPERTY,TIMESTAMP_FACTOR_PROPERTY_DEFAULT));
+		instances=Integer.parseInt(p.getProperty(INSTANCES_PROPERTY,INSTANCES_PROPERTY_DEFAULT));
+		instanceid=Integer.parseInt(p.getProperty(INSTANCEID_PROPERTY,INSTANCEID_PROPERTY_DEFAULT));
+
 		
     		dataintegrity = Boolean.parseBoolean(p.getProperty(DATA_INTEGRITY_PROPERTY, DATA_INTEGRITY_PROPERTY_DEFAULT));
     		//Confirm that fieldlengthgenerator returns a constant if data
@@ -748,11 +751,13 @@ public class ReplayWorkloadScheduledMulti extends Workload
 		   //System.out.println("Delay: " + sleeptime);
 		   currentTime = System.currentTimeMillis();
 		   //// TO IMPROVE - EBG - Check the delay 
-		   delay = sleeptime - (currentTime-startTime);
+		   //delay = sleeptime - (currentTime-startTime);
+		   delay = sleeptime - (currentTime-startTime) + 20;
 		   //System.out.println("Real delay: " + delay);
                 }
 
 		// Schedule the event
+		System.out.println(dbkey + "," + trace[2] + "," + sleeptime);
 		scheduler.schedule(new ScheduledEvent(db, op, dbkey), delay, TimeUnit.MILLISECONDS);
 
 		return true;
