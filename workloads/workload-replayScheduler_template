@@ -54,3 +54,14 @@ withsleep=false
 # 1000 when timestamp in trace is in seconds. Default: 1
 timestampfactor=1000
 #timestampfactor=1
+
+# Instances number: This is used to replay traces with steps equals to the instance number
+instances=1
+#
+# Instance id: This id indicate where to start reading the trace file. Should be from 0 to (instances-1)
+instanceid=0
+
+# Start datetime for scheduled trace replay
+# Example of how to get the right format in Linux: date +"%Y-%m-%d %H:%m:%S:000"
+startdatetime=2000-01-01 00:00:00:000
+
