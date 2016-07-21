@@ -50,6 +50,10 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.text.ParseException;
+import java.util.Date;
+
 
 /**
  * The core benchmark scenario. Represents a set of clients doing simple CRUD operations. The relative 
@@ -240,6 +244,17 @@ public class ReplayWorkloadScheduledMulti extends Workload
 
 	int instances;
 
+	/**
+	 * The name of the property with the start datetime
+	 */
+	public static final String STARTDATETIME_PROPERTY="startdatetime";
+	
+	/**
+	 * The default value for the STARTDATETIME property.
+	 */
+	public static final String STARTDATETIME_PROPERTY_DEFAULT="2016-01-01 00:00:00:000";
+
+	String startdatetime="2016-01-01 00:00:00:000"; /*Declared later when property is read*/
 
 	/**
 	 * ScheduledExecutorService object to schedule the rquests.
@@ -471,6 +486,7 @@ public class ReplayWorkloadScheduledMulti extends Workload
 		timestampfactor=Integer.parseInt(p.getProperty(TIMESTAMP_FACTOR_PROPERTY,TIMESTAMP_FACTOR_PROPERTY_DEFAULT));
 		instances=Integer.parseInt(p.getProperty(INSTANCES_PROPERTY,INSTANCES_PROPERTY_DEFAULT));
 		instanceid=Integer.parseInt(p.getProperty(INSTANCEID_PROPERTY,INSTANCEID_PROPERTY_DEFAULT));
+		startdatetime=p.getProperty(STARTDATETIME_PROPERTY,STARTDATETIME_PROPERTY_DEFAULT);
 
 		
     		dataintegrity = Boolean.parseBoolean(p.getProperty(DATA_INTEGRITY_PROPERTY, DATA_INTEGRITY_PROPERTY_DEFAULT));
@@ -757,7 +773,7 @@ public class ReplayWorkloadScheduledMulti extends Workload
                 }
 
 		// Schedule the event
-		System.out.println(dbkey + "," + trace[2] + "," + sleeptime);
+		System.out.println(dbkey + "," + trace[2] + "," + sleeptime + "," + delay);
 		scheduler.schedule(new ScheduledEvent(db, op, dbkey), delay, TimeUnit.MILLISECONDS);
 
 		return true;
@@ -780,9 +796,9 @@ public class ReplayWorkloadScheduledMulti extends Workload
 	    
 	    @Override
 	    public void run() {
+		System.out.println(new Timestamp(System.currentTimeMillis()) + "," + dbkey);
                 if (op.compareTo("READ")==0)
                 {
-			System.out.println(new Timestamp(System.currentTimeMillis()) + "," + dbkey);
                 	doTransactionRead(db,dbkey);
                 }
                 else if (op.compareTo("UPDATE")==0)
@@ -816,9 +832,23 @@ public class ReplayWorkloadScheduledMulti extends Workload
 
 	/* Method to check if the scheduler is terminated */
 	public void setStartTime() {
-		startTime = System.currentTimeMillis();
+		//Read the start time from the properties. If it's in the past, use currentTime.
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
+		Date date = new Date();
+		Date currentDate = new Date();
+		try {
+			date = format.parse(startdatetime);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		//long dateTimestamp = date.getTime();
+		if (date.before(currentDate)){
+			startTime = System.currentTimeMillis();
+		} else{
+			startTime = date.getTime();
+		}
+		System.out.println("Start Time in Milliseconds: "+ startTime);
  	}
-
 
 
   /**
