@@ -657,7 +657,9 @@ public class ReplayWorkloadScheduled extends Workload
 				e.printStackTrace();
 			}
 		}
-		String dbkey = trace[1];
+		//String dbkey = trace[1];
+                String dbkey_unpadded = trace[1];
+                String dbkey = "AAAAAAAAAAAAAAAAAAAAAAA".substring(dbkey_unpadded.length()) + dbkey_unpadded;
 
 		HashMap<String, ByteIterator> values = buildValues(dbkey);
 		if (db.insert(table,dbkey,values) == 0)
@@ -689,7 +691,9 @@ public class ReplayWorkloadScheduled extends Workload
 		}
 		// The first value is the operation, the second value is the object ID, and the third value is the timestamp or delay
 		String op = trace[0];
-		String dbkey = trace[1];
+		//String dbkey = trace[1];
+                String dbkey_unpadded = trace[1];
+                String dbkey = "AAAAAAAAAAAAAAAAAAAAAAA".substring(dbkey_unpadded.length()) + dbkey_unpadded;
 
 		// EBG - 20160604
 		// If "withtimestamp" is enabled, pause before sending the next request.

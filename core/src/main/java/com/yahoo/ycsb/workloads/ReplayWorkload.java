@@ -630,7 +630,9 @@ public class ReplayWorkload extends Workload
 				e.printStackTrace();
 			}
 		}
-		String dbkey = trace[1];
+		String dbkey_unpadded = trace[1];
+		String dbkey = "AAAAAAAAAAAAAAAAAAAAAAA".substring(dbkey_unpadded.length()) + dbkey_unpadded;
+
 
 		HashMap<String, ByteIterator> values = buildValues(dbkey);
 		if (db.insert(table,dbkey,values) == 0)
@@ -656,7 +658,9 @@ public class ReplayWorkload extends Workload
 			}
 		}
 		String op = trace[0];
-		String dbkey = trace[1];
+		//String dbkey = trace[1];
+                String dbkey_unpadded = trace[1];
+                String dbkey = "AAAAAAAAAAAAAAAAAAAAAAA".substring(dbkey_unpadded.length()) + dbkey_unpadded;
 		// EBG - 20160604
 		// If "withtimestamp" is enabled, pause before sending the next request.
 		long sleeptime = 0;
