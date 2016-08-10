@@ -87,6 +87,7 @@
     <module>dynamodb</module>
     <module>elasticsearch</module>
     <module>gemfire</module>
+    <module>hazelcast</module>
     <module>hbase</module>
     <module>hypertable</module>
     <module>infinispan</module>

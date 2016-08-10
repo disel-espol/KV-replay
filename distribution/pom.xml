@@ -59,6 +59,11 @@
     </dependency>
     <dependency>
       <groupId>com.yahoo.ycsb</groupId>
+      <artifactId>hazelcast-binding</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.yahoo.ycsb</groupId>
       <artifactId>hbase-binding</artifactId>
       <version>${project.version}</version>
     </dependency>
