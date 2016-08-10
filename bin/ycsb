@@ -44,6 +44,7 @@ DATABASES = {
     "dynamodb"     : "com.yahoo.ycsb.db.DynamoDBClient",
     "elasticsearch": "com.yahoo.ycsb.db.ElasticSearchClient",
     "gemfire"      : "com.yahoo.ycsb.db.GemFireClient",
+    "hazelcast"    : "com.yahoo.ycsb.db.HazelcastClient",
     "hbase"        : "com.yahoo.ycsb.db.HBaseClient",
     "hbase-10"     : "com.yahoo.ycsb.db.HBaseClient10",
     "hypertable"   : "com.yahoo.ycsb.db.HypertableClient",
