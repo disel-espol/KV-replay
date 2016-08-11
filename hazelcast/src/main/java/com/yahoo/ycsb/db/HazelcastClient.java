@@ -280,11 +280,12 @@ public class HazelcastClient extends DB {
                 ConcurrentMap<String, Map<String, String>> distributedMap = getMap(table);
                 Map<String, String> resultMap = distributedMap.get(key);
                 if (resultMap != null) {
-                    log("info", "resultMap not null", null);
-                    log("info", resultMap.toString(), null);
+                    //log("info", "resultMap not null", null);
+                    //log("info", resultMap.toString(), null);
                     result.putAll(resultMap);
+                    StringByteIterator.putAllAsByteIterators(resultByteIterator,result);
 		} else{
-                    log("info", "resultMap IS null", null);
+                    //log("info", "resultMap IS null", null);
 		    returnCode=1;
 		}
 		//result.putAll(resultMap);
