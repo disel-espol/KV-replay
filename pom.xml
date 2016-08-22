@@ -100,6 +100,7 @@
     <module>redis</module>
     <module>riak</module>
     <module>tarantool</module>
+    <module>terracotta</module>
     <!--<module>voldemort</module>-->
   </modules>
 

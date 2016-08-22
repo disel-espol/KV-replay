@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tc:tc-config xmlns:tc="http://www.terracotta.org/config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.terracotta.org/schema/terracotta-6.xsd">
+
+  <servers>
+    <server host="gst-02" name="server2a">
+      <data>/tmp/terracotta/server2a-data</data>
+      <logs>/tmp/terracotta/server2a-logs</logs>
+      <statistics>/tmp/terracotta/server2a-stats</statistics>
+      <dso-port>9510</dso-port>
+    </server>
+
+    <server host="gst-02" name="server2b">
+      <data>/tmp/terracotta/server2b-data</data>
+      <logs>/tmp/terracotta/server2b-logs</logs>
+      <statistics>/tmp/terracotta/server2b-stats</statistics>
+      <dso-port>9511</dso-port>
+    </server>
+
+    <server host="gst-03" name="server3a">
+      <data>/tmp/terracotta/server3a-data</data>
+      <logs>/tmp/terracotta/server3a-logs</logs>
+      <statistics>/tmp/terracotta/server3a-stats</statistics>
+      <dso-port>9510</dso-port>
+    </server>
+
+    <server host="gst-03" name="server3b">
+      <data>/tmp/terracotta/server3b-data</data>
+      <logs>/tmp/terracotta/server3b-logs</logs>
+      <statistics>/tmp/terracotta/server3b-stats</statistics>
+      <dso-port>9511</dso-port>
+    </server>
+
+    <server host="gst-04" name="server4a">
+      <data>/tmp/terracotta/server4a-data</data>
+      <logs>/tmp/terracotta/server4a-logs</logs>
+      <statistics>/tmp/terracotta/server4a-stats</statistics>
+      <dso-port>9510</dso-port>
+    </server>
+
+    <server host="gst-04" name="server4b">
+      <data>/tmp/terracotta/server4b-data</data>
+      <logs>/tmp/terracotta/server4b-logs</logs>
+      <statistics>/tmp/terracotta/server4b-stats</statistics>
+      <dso-port>9511</dso-port>
+    </server>
+
+    <mirror-groups>
+      <mirror-group group-name="group1">
+        <members>
+          <member>server2a</member>
+          <member>server3b</member>
+        </members>
+      </mirror-group>
+      <mirror-group group-name="group2">
+        <members>
+          <member>server3a</member>
+          <member>server4b</member>
+        </members>
+      </mirror-group>
+      <mirror-group group-name="group3">
+        <members>
+          <member>server4a</member>
+          <member>server2b</member>
+        </members>
+      </mirror-group>
+    </mirror-groups>
+
+    <ha>
+      <mode>networked-active-passive</mode>
+    </ha>
+  </servers>
+
+  <clients>
+    <logs>/tmp/terracotta/client-logs</logs>
+  </clients>
+
+  <application>
+    <dso>
+      <instrumented-classes>
+        <include>
+          <class-expression>HelloEhcacheTerra</class-expression>
+        </include>
+        <!-- <include> <class-expression>HelloEhcacheTerra$EhcacheValue</class-expression> </include> -->
+      </instrumented-classes>
+
+      <locks>
+        <autolock>
+          <lock-level>write</lock-level>
+          <method-expression>void HelloEhcacheTerra.main(..)</method-expression>
+        </autolock>
+      </locks>
+    </dso>
+  </application>
+
+</tc:tc-config>

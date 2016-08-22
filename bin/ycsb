@@ -59,6 +59,7 @@ DATABASES = {
     "redis"        : "com.yahoo.ycsb.db.RedisClient",
     "riak"         : "com.yahoo.ycsb.db.riak.RiakKVClient",
     "tarantool"    : "com.yahoo.ycsb.db.TarantoolClient",
+    "terracotta"   : "com.yahoo.ycsb.db.TerracottaClient",
     "voldemort"    : "com.yahoo.ycsb.db.VoldemortClient"
 }
 
