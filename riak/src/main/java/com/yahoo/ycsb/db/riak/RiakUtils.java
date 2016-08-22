@@ -144,7 +144,9 @@ final class RiakUtils {
   static Long getKeyAsLong(String key) {
     String keyString = key.replaceFirst("[a-zA-Z]*", "");
 
+    // EBG - Change this line when using with the replay and IDs are not only numbers
     return Long.parseLong(keyString);
+    //return Long.parseLong("123456");
   }
 
   /**
