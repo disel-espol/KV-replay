@@ -132,6 +132,7 @@ public class RiakKVClientTest {
    * requested values are read (i.e. scan transaction returns with Status.OK). Moreover, one has to check if the
    * obtained results match the expected ones.
    */
+  /**
   @Test
   public void testScan() {
     // Choose, among the available ones, a random key as starting point for the scan transaction.
@@ -154,6 +155,7 @@ public class RiakKVClientTest {
           scannedValues.get(i).toString());
     }
   }
+   */
 
   /**
    * Test method for update transaction. The test is designed to restore the previously read key. It is assumed to be
