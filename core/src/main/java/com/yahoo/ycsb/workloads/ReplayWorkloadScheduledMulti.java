@@ -735,7 +735,7 @@ public class ReplayWorkloadScheduledMulti extends Workload
 		synchronized(this){
 			try{
 				trace = tracefile.readLine().split(",");
-				for (int i = 0; i < instances; i++) {
+				for (int i = 0; i <instances-1; i++) {
 					tracefile.readLine();
 				}
 			}catch(Exception e){
