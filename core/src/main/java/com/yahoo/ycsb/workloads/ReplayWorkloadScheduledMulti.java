@@ -612,7 +612,7 @@ public class ReplayWorkloadScheduledMulti extends Workload
 			tracefile = new BufferedReader(new FileReader(traceFilename));
                 	synchronized(this){
                         try{
-                                for (int i = 0; i < instanceid; i++) {
+                                for (int i = 0; i < instanceid-1; i++) {
                                         tracefile.readLine();
                                 }
                         }catch(Exception e){
