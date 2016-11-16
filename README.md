@@ -4,8 +4,7 @@ Overview
 --------
 KV-replay is a project to extend the Yahoo! Cloud System Benchmark (YCSB) by including the option to reproduce a realistic workload by reading a file of traces.
 
-Links about Yahoo! Cloud System Benchmark (YCSB)
------
+###Links about Yahoo! Cloud System Benchmark (YCSB)
 Information and source code for the Yahoo! Cloud System Benchmark (YCSB) project can be found in the following links:
 
 http://wiki.github.com/brianfrankcooper/YCSB/  
