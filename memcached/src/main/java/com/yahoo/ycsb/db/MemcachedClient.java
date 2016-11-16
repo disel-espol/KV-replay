@@ -178,8 +178,10 @@ public class MemcachedClient extends DB {
       Object document = future.get();
       if (document != null) {
         fromJson((String) document, fields, result);
+        return 0;
+      } else{
+        return 1;
       }
-      return 0;
     } catch (Exception e) {
       logger.error("Error encountered for key: " + key, e);
       return 1;
