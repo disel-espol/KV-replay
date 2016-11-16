@@ -1,8 +1,8 @@
-Yahoo! Cloud System Benchmark - with Replay Workload (YCSB-replay)
-==================================================================
+KV-replay - Benchmarking Key-Value Stores via Trace Replay
+==========================================================
 Overview
 --------
-YCSB-replay is a project to extend the Yahoo! Cloud System Benchmark (YCSB) by including the option to reproduce a realistic workload by reading a file of traces.
+KV-replay is a project to extend the Yahoo! Cloud System Benchmark (YCSB) by including the option to reproduce a realistic workload by reading a file of traces.
 
 Links about Yahoo! Cloud System Benchmark (YCSB)
 -----
@@ -17,8 +17,8 @@ Getting Started
 1. Clone this repository:
 
     ```sh
-    git clone https://github.com/ebozag/YCSB-replay.git
-    cd YCSB-replay/
+    git clone https://github.com/ebozag/KV-replay.git
+    cd KV-replay/
     ```
     
 2.  Build from source
