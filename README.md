@@ -37,15 +37,14 @@ Getting Started
 3. Set up a database to benchmark. There is a README file under each binding 
    directory.
 
-4. Set up the configuration file for YSCB-replay. There is a template configuration file in workloads/workload-rp. The main configuration lines are:
+4. Set up the configuration file for KV-replay. There is a template configuration file in workloads/workload-rp. The main configuration lines are:
 
    workload=com.yahoo.ycsb.workloads.ReplayWorkload
    tracefile=workloads/<trace filename>
 
-5. Run YCSB-replay command. 
+5. Run KV-replay command (exaple for Redis database in localhost). 
     
     ```sh
-    bin/ycsb load basic -P workloads/workload-rp
-    bin/ycsb run basic -P workloads/workload-rp
+    bin/kv-replay run redis -P workloads/workload-replay_template -p "redis.host=127.0.0.1" -p "redis.port=6379"
     ```
 
