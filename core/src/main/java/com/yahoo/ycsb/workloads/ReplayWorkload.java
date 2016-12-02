@@ -599,7 +599,6 @@ public class ReplayWorkload extends Workload
    * modificado 10/11/2016 jose viteri
    */
   private HashMap<String, ByteIterator> buildSingleValue(String key,int fieldSize) {
-    int valuee = 0;
     HashMap<String,ByteIterator> value = new HashMap<String,ByteIterator>();
   
     String fieldkey = fieldnames.get(Integer.parseInt(fieldchooser.nextString()));
@@ -621,7 +620,6 @@ public class ReplayWorkload extends Workload
    * modificado 10/11/2016 jose viteri
    */
   private HashMap<String, ByteIterator> buildValues(String key, int fieldSize) {       
-      int valuee = 0;
     HashMap<String,ByteIterator> values = new HashMap<String,ByteIterator>();
     
     

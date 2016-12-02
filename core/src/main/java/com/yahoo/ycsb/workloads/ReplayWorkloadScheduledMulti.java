@@ -422,6 +422,26 @@ public class ReplayWorkloadScheduledMulti extends Workload
 	BufferedReader tracefile;
 
     private Measurements _measurements = Measurements.getMeasurements();
+    
+    
+    
+        /**agregado jose viteri 30/11/2016
+         * 
+         * 
+         * 
+         */
+         
+        /**
+     * The name of the property to decide if the size of the objects are read from the trace, Default value false.
+     */
+    public static final String SIZE_FROM_TRACE="sizefromtrace";
+     
+    /**
+     * The default value of the size from trace property
+     */
+    public static final String SIZE_FROM_TRACE_DEFAULT="false";
+ 
+    boolean sizefromtrace; 
 	
 	protected static IntegerGenerator getFieldLengthGenerator(Properties p) throws WorkloadException{
 		IntegerGenerator fieldlengthgenerator;
@@ -453,8 +473,20 @@ public class ReplayWorkloadScheduledMulti extends Workload
 	public void init(Properties p) throws WorkloadException
 	{
 		table = p.getProperty(TABLENAME_PROPERTY,TABLENAME_PROPERTY_DEFAULT);
+                
+                //agregado jose viteri 30/11/2016
+                sizefromtrace = Boolean.parseBoolean(p.getProperty(SIZE_FROM_TRACE,SIZE_FROM_TRACE_DEFAULT));
+                
+                //agregado jose viteri 30/11/2016 
+                //set fieldCount   
+                if (sizefromtrace){
+                    fieldcount = 1 ;
+                }else{
+                    fieldcount=Integer.parseInt(p.getProperty(FIELD_COUNT_PROPERTY,FIELD_COUNT_PROPERTY_DEFAULT));
+                }
+                
 		
-		fieldcount=Integer.parseInt(p.getProperty(FIELD_COUNT_PROPERTY,FIELD_COUNT_PROPERTY_DEFAULT));
+		
 		fieldnames = new ArrayList<String>();
     		for (int i = 0; i < fieldcount; i++) {
     		    fieldnames.add("field" + i);
@@ -640,17 +672,20 @@ public class ReplayWorkloadScheduledMulti extends Workload
 	
   /**
    * Builds a value for a randomly chosen field.
+   * modificado jose viteri 30/11/2016
    */
-  private HashMap<String, ByteIterator> buildSingleValue(String key) {
+  private HashMap<String, ByteIterator> buildSingleValue(String key,int fieldSize) {
+    int valuee = 0;
     HashMap<String,ByteIterator> value = new HashMap<String,ByteIterator>();
-
+  
     String fieldkey = fieldnames.get(Integer.parseInt(fieldchooser.nextString()));
     ByteIterator data;
+    // dataintegrity debe ser constante, por lo que no deberia modificarse
     if (dataintegrity) {
-      data = new StringByteIterator(buildDeterministicValue(key, fieldkey));
+      data = new StringByteIterator(buildDeterministicValue(key, fieldkey, fieldSize));
     } else {
       //fill with random data
-      data = new RandomByteIterator(fieldlengthgenerator.nextInt());
+        data = new RandomByteIterator(fieldSize);
     }
     value.put(fieldkey,data);
 
@@ -659,17 +694,19 @@ public class ReplayWorkloadScheduledMulti extends Workload
 
   /**
    * Builds values for all fields.
+   * modificado jose viteri 30/11/2016
    */
-  private HashMap<String, ByteIterator> buildValues(String key) {        
+  private HashMap<String, ByteIterator> buildValues(String key, int fieldSize) {       
     HashMap<String,ByteIterator> values = new HashMap<String,ByteIterator>();
-
+    
+    
     for (String fieldkey : fieldnames) {
       ByteIterator data;
       if (dataintegrity) {
-        data = new StringByteIterator(buildDeterministicValue(key, fieldkey));
+        data = new StringByteIterator(buildDeterministicValue(key, fieldkey, fieldSize));
       } else {
-        //fill with random data
-        data = new RandomByteIterator(fieldlengthgenerator.nextInt());
+          
+          data = new RandomByteIterator(fieldSize);      
       }
       values.put(fieldkey,data);
     }
@@ -678,9 +715,10 @@ public class ReplayWorkloadScheduledMulti extends Workload
 
   /**
    * Build a deterministic value given the key information.
+   * modificado jose viteri 30/11/2016
    */
-  private String buildDeterministicValue(String key, String fieldkey) {
-    int size = fieldlengthgenerator.nextInt();
+  private String buildDeterministicValue(String key, String fieldkey ,int size) {
+    //int size = fieldlengthgenerator.nextInt();
     StringBuilder sb = new StringBuilder(size);
     sb.append(key);
     sb.append(':');
@@ -695,6 +733,7 @@ public class ReplayWorkloadScheduledMulti extends Workload
   }
 
 	/**
+         * modificado jose viteri 30/11/2016
 	 * Do one insert operation. Because it will be called concurrently from multiple client threads, this 
 	 * function must be thread safe. However, avoid synchronized, or the threads will block waiting for each 
 	 * other, and it will be difficult to reach the target throughput. Ideally, this function would have no side
@@ -713,8 +752,16 @@ public class ReplayWorkloadScheduledMulti extends Workload
 		//String dbkey = trace[1];
                 String dbkey_unpadded = trace[1];
                 String dbkey = "AAAAAAAAAAAAAAAAAAAAAAA".substring(dbkey_unpadded.length()) + dbkey_unpadded;
+                
 
-		HashMap<String, ByteIterator> values = buildValues(dbkey);
+                int fieldSize = fieldlengthgenerator.nextInt();
+                if (sizefromtrace){
+                    fieldSize = Integer.parseInt(trace[3]);
+                }
+                System.out.println(dbkey_unpadded);
+                System.out.println(fieldSize);
+
+		HashMap<String, ByteIterator> values = buildValues(dbkey, fieldSize);
 		if (db.insert(table,dbkey,values) == 0)
 			return true;
 		else
@@ -722,6 +769,7 @@ public class ReplayWorkloadScheduledMulti extends Workload
 	}
 
 	/**
+         * modificado jose viteri 30/11/2016
 	 * Do one transaction operation. Because it will be called concurrently from multiple client threads, this 
 	 * function must be thread safe. However, avoid synchronized, or the threads will block waiting for each 
 	 * other, and it will be difficult to reach the target throughput. Ideally, this function would have no side
@@ -747,6 +795,12 @@ public class ReplayWorkloadScheduledMulti extends Workload
 		//String dbkey = trace[1];
                 String dbkey_unpadded = trace[1];
                 String dbkey = "AAAAAAAAAAAAAAAAAAAAAAA".substring(dbkey_unpadded.length()) + dbkey_unpadded;
+                
+                
+                int fieldSize = fieldlengthgenerator.nextInt();
+                if (sizefromtrace){
+                    fieldSize = Integer.parseInt(trace[3]);
+                }
 
 		// EBG - 20160604
 		// If "withtimestamp" is enabled, pause before sending the next request.
@@ -778,12 +832,13 @@ public class ReplayWorkloadScheduledMulti extends Workload
 
 		// Schedule the event
 		System.out.println(dbkey + "," + trace[2] + "," + sleeptime + "," + delay);
-		scheduler.schedule(new ScheduledEvent(db, op, dbkey), delay, TimeUnit.MILLISECONDS);
+		scheduler.schedule(new ScheduledEvent(db, op, dbkey, fieldSize), delay, TimeUnit.MILLISECONDS);
 
 		return true;
 	}
 
 	/** 
+         * modificado jose viteri 30/11/2016
  	 * Class to schedule events 
  	 *
  	 */
@@ -791,11 +846,13 @@ public class ReplayWorkloadScheduledMulti extends Workload
 	    private String op = null;
 	    private String dbkey = null;
 	    private DB db = null;
+            private Integer fieldSize = null;
         
-	    public ScheduledEvent(DB database, String operation, String key) {
+	    public ScheduledEvent(DB database, String operation, String key, int fieldSize) {
 		op = operation;
 		dbkey = key;
 		db = database;
+                this.fieldSize = fieldSize;
 	    }
 	    
 	    @Override
@@ -803,15 +860,15 @@ public class ReplayWorkloadScheduledMulti extends Workload
 		System.out.println(new Timestamp(System.currentTimeMillis()) + "," + dbkey);
                 if (op.compareTo("READ")==0)
                 {
-                	doTransactionRead(db,dbkey);
+                	doTransactionRead(db,dbkey, fieldSize);
                 }
                 else if (op.compareTo("UPDATE")==0)
                 {
-                        doTransactionUpdate(db,dbkey);
+                        doTransactionUpdate(db,dbkey, fieldSize);
                 }
                 else if (op.compareTo("INSERT")==0)
                 {
-                        doTransactionInsert(db,dbkey);
+                        doTransactionInsert(db,dbkey, fieldSize);
                 }
                 else if (op.compareTo("SCAN")==0)
                 {
@@ -819,7 +876,7 @@ public class ReplayWorkloadScheduledMulti extends Workload
                 }
                 else
                 {
-                        doTransactionReadModifyWrite(db,dbkey);
+                        doTransactionReadModifyWrite(db,dbkey, fieldSize);
                 }
 	    } 
 	}
@@ -856,18 +913,19 @@ public class ReplayWorkloadScheduledMulti extends Workload
 
 
   /**
+   * modificado jose viteri 30/11/2016
    * Results are reported in the first three buckets of the histogram under
    * the label "VERIFY". 
    * Bucket 0 means the expected data was returned.
    * Bucket 1 means incorrect data was returned.
    * Bucket 2 means null data was returned when some data was expected. 
    */
-  protected void verifyRow(String key, HashMap<String,ByteIterator> cells) {
+  protected void verifyRow(String key, HashMap<String,ByteIterator> cells, int fieldSize) {
     int matchType = DATA_INT_MATCH;
     if (!cells.isEmpty()) {
       for (Map.Entry<String, ByteIterator> entry : cells.entrySet()) {
         if (!entry.getValue().toString().equals(
-            buildDeterministicValue(key, entry.getKey()))) {
+            buildDeterministicValue(key, entry.getKey(), fieldSize))) {
           matchType = DATA_INT_DEVIATE;
           break;
         }
@@ -897,7 +955,8 @@ public class ReplayWorkloadScheduledMulti extends Workload
         return keynum;
     }
 
-	public void doTransactionRead(DB db, String keyname)
+        //modificado jose viteri 30/11/2016
+	public void doTransactionRead(DB db, String keyname, int fieldSize)
 	{
 		HashSet<String> fields=null;
 
@@ -916,15 +975,19 @@ public class ReplayWorkloadScheduledMulti extends Workload
 
 		// EBG - 07/12/2015 - If working AS_CACHE and get result is empty, Insert the record. 
     		if (ascache && cells.isEmpty()) {
-		   doTransactionInsert(db,keyname);
+                    //System.out.println(keyname);
+                    //System.out.println(fieldSize);
+		   doTransactionInsert(db,keyname, fieldSize);
     		}
 
     		if (dataintegrity) {
-    		  verifyRow(keyname, cells);
+    		  verifyRow(keyname, cells, fieldSize);
     		}
 	}
 	
-	public void doTransactionReadModifyWrite(DB db, String keynameX)
+        
+        //modificado jose viteri 30/11/2016
+	public void doTransactionReadModifyWrite(DB db, String keynameX, int fieldSize)
 	{
 		//choose a random key
 		int keynum = nextKeynum();
@@ -947,12 +1010,12 @@ public class ReplayWorkloadScheduledMulti extends Workload
 		if (writeallfields)
 		{
 		   //new data for all the fields
-		   values = buildValues(keyname);
+		   values = buildValues(keyname, fieldSize);
 		}
 		else
 		{
 		   //update a random field
-		   values = buildSingleValue(keyname);
+		   values = buildSingleValue(keyname, fieldSize);
 		}
 
 		//do the transaction
@@ -970,7 +1033,7 @@ public class ReplayWorkloadScheduledMulti extends Workload
 		long en=System.nanoTime();
 
     		if (dataintegrity) {
-    		  verifyRow(keyname, cells);
+    		  verifyRow(keyname, cells, fieldSize);
     		}
 
 		_measurements .measure("READ-MODIFY-WRITE", (int)((en-st)/1000));
@@ -995,28 +1058,31 @@ public class ReplayWorkloadScheduledMulti extends Workload
 
 		db.scan(table,startkeyname,len,fields,new Vector<HashMap<String,ByteIterator>>());
 	}
-
-	public void doTransactionUpdate(DB db, String keyname)
+        
+        //modificado jose viteri 30/11/2016
+	public void doTransactionUpdate(DB db, String keyname, int fieldSize)
 	{
 		HashMap<String,ByteIterator> values;
 
 		if (writeallfields)
 		{
 		   //new data for all the fields
-		   values = buildValues(keyname);
+		   values = buildValues(keyname, fieldSize);
 		}
 		else
 		{
 		   //update a random field
-		   values = buildSingleValue(keyname);
+		   values = buildSingleValue(keyname, fieldSize);
 		}
 
 		db.update(table,keyname,values);
 	}
-
-	public void doTransactionInsert(DB db, String dbkey)
+        
+        
+        //modificado jose viteri 30/11/2016
+	public void doTransactionInsert(DB db, String dbkey, int fieldSize)
 	{
-		HashMap<String, ByteIterator> values = buildValues(dbkey);
+		HashMap<String, ByteIterator> values = buildValues(dbkey, fieldSize);
 		db.insert(table,dbkey,values);
 	}
 }
