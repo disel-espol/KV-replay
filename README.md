@@ -38,10 +38,10 @@ Getting Started
    directory.
 
 4. Set up the configuration file for KV-replay. There is a template configuration file in workloads/workload-rp. The main configuration lines are:
-
+   ```
    workload=com.yahoo.ycsb.workloads.ReplayWorkload
    tracefile=workloads/<trace filename>
-
+   ```
 5. Run KV-replay command (exaple for Redis database in localhost). 
     
     ```sh
