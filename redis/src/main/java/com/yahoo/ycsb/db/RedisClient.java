@@ -29,12 +29,14 @@ public class RedisClient extends DB {
     public static final String HOST_PROPERTY = "redis.host";
     public static final String PORT_PROPERTY = "redis.port";
     public static final String PASSWORD_PROPERTY = "redis.password";
+    public static final String TIMEOUT_PROPERTY = "redis.timeout";
 
     public static final String INDEX_KEY = "_indices";
 
     public void init() throws DBException {
         Properties props = getProperties();
         int port;
+        int timeout;
 
         String portString = props.getProperty(PORT_PROPERTY);
         if (portString != null) {
@@ -43,9 +45,18 @@ public class RedisClient extends DB {
         else {
             port = Protocol.DEFAULT_PORT;
         }
+        
+        String timeoutString = props.getProperty(TIMEOUT_PROPERTY);
+        if (timeoutString != null) {
+            timeout = Integer.parseInt(timeoutString);
+        }
+        else {
+            timeout = Protocol.DEFAULT_TIMEOUT;
+        }
+        
         String host = props.getProperty(HOST_PROPERTY);
 
-        jedis = new Jedis(host, port);
+        jedis = new Jedis(host, port, timeout);
         jedis.connect();
 
         String password = props.getProperty(PASSWORD_PROPERTY);
