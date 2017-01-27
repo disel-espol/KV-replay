@@ -219,6 +219,17 @@ public class ReplayWorkloadScheduledMulti extends Workload
 	public static final String WITH_SLEEP_PROPERTY_DEFAULT="true";
 
 	boolean withsleep;
+        
+                /**
+	 * The name of the property for deciding to use a temporal scaling over the workload
+	 */
+        public static final String TEMPORAL_SCALING_PROPERTY = "temporalscaling";
+        
+         /**
+	 * dafault value of temporal scaling
+	 */
+        public static final String TEMPORAL_SCALING_PROPERTY_DEFAULT = "1.0";
+        
 	
 	/**
 	 * The name of the property with the instance ID
@@ -420,6 +431,9 @@ public class ReplayWorkloadScheduledMulti extends Workload
 	int recordcount;
 
 	BufferedReader tracefile;
+              //agregado 19/01/17
+        double temporalscaling;
+
 
     private Measurements _measurements = Measurements.getMeasurements();
     
@@ -519,6 +533,9 @@ public class ReplayWorkloadScheduledMulti extends Workload
 		instances=Integer.parseInt(p.getProperty(INSTANCES_PROPERTY,INSTANCES_PROPERTY_DEFAULT));
 		instanceid=Integer.parseInt(p.getProperty(INSTANCEID_PROPERTY,INSTANCEID_PROPERTY_DEFAULT));
 		startdatetime=p.getProperty(STARTDATETIME_PROPERTY,STARTDATETIME_PROPERTY_DEFAULT);
+                
+                //agregado jv 19/01/17
+                temporalscaling = Double.parseDouble(p.getProperty(TEMPORAL_SCALING_PROPERTY,TEMPORAL_SCALING_PROPERTY_DEFAULT ));
 
 		
     		dataintegrity = Boolean.parseBoolean(p.getProperty(DATA_INTEGRITY_PROPERTY, DATA_INTEGRITY_PROPERTY_DEFAULT));
@@ -811,14 +828,14 @@ public class ReplayWorkloadScheduledMulti extends Workload
 		   {
 			// EBG - 20160613
 			// If "withsleep" is enabled, the the sleep time directly from the trace file.
-			sleeptime += Long.valueOf(trace[2]);
+                       sleeptime += (long) Math.round(Double.parseDouble(trace[2])*temporalscaling);
 		   }
 		   else
 		   {
 			// EBG - 20160606
 			// Calculate the sleep time by subtracting the timestamps from the tracefile.
                         double newtimestamp = (Double.valueOf(trace[2]))*timestampfactor;
-                        sleeptime += Math.round(newtimestamp - prevtimestamp);
+                        sleeptime += Math.round((newtimestamp - prevtimestamp)*temporalscaling);
                         prevtimestamp = newtimestamp;
 		   }
 
