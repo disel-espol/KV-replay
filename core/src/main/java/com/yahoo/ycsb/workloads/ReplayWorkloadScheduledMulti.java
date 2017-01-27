@@ -269,8 +269,10 @@ public class ReplayWorkloadScheduledMulti extends Workload
 
 	/**
 	 * ScheduledExecutorService object to schedule the rquests.
+	 * We are using a single thread, because in some cases (like Redis), the client
+	 * is not threadsafe.
 	 */
-	private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(200);
+	private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
 	private long startTime = -1;
 	private long currentTime = -1;
