@@ -50,6 +50,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * The core benchmark scenario. Represents a set of clients doing simple CRUD operations. The relative 
@@ -215,8 +218,22 @@ public class ReplayWorkloadScheduled extends Workload
 	public static final String WITH_SLEEP_PROPERTY_DEFAULT="true";
 
 	boolean withsleep;
+        
+        /**
+	 * The name of the property for deciding to use a temporal scaling over the workload
+	 */
+        public static final String TEMPORAL_SCALING_PROPERTY = "temporalscaling";
+        
+         /**
+	 * dafault value of temporal scaling
+	 */
+        public static final String TEMPORAL_SCALING_PROPERTY_DEFAULT = "1.0";
+        
+        
 
-	/**
+
+        
+  	/**
 	 * ScheduledExecutorService object to schedule the rquests.
 	 */
 	private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(200);
@@ -380,6 +397,8 @@ public class ReplayWorkloadScheduled extends Workload
 	int recordcount;
 
 	BufferedReader tracefile;
+        
+        double temporalscaling;
 
     private Measurements _measurements = Measurements.getMeasurements();
     
@@ -482,6 +501,11 @@ public class ReplayWorkloadScheduled extends Workload
     		dataintegrity = Boolean.parseBoolean(p.getProperty(DATA_INTEGRITY_PROPERTY, DATA_INTEGRITY_PROPERTY_DEFAULT));
     		//Confirm that fieldlengthgenerator returns a constant if data
     		//integrity check requested.
+                                
+                
+                temporalscaling = Double.parseDouble(p.getProperty(TEMPORAL_SCALING_PROPERTY,TEMPORAL_SCALING_PROPERTY_DEFAULT ));
+                
+   
     		if (dataintegrity && !(p.getProperty(FIELD_LENGTH_DISTRIBUTION_PROPERTY, FIELD_LENGTH_DISTRIBUTION_PROPERTY_DEFAULT)).equals("constant"))
     		{
     		  System.err.println("Must have constant field size to check data integrity.");
@@ -736,20 +760,20 @@ public class ReplayWorkloadScheduled extends Workload
 		// EBG - 20160604
 		// If "withtimestamp" is enabled, pause before sending the next request.
 		// long sleeptime = 0;
-		long delay = 0;
+		long delay = 0;                
 		if (withtimestamp) {
 		   if (withsleep) 
 		   {
 			// EBG - 20160613
-			// If "withsleep" is enabled, the the sleep time directly from the trace file.
-			sleeptime += Long.valueOf(trace[2]);
+			// If "withsleep" is enabled, the the sleep time directly from the trace file. 
+                       sleeptime += (long) Math.round(Double.parseDouble(trace[2])*temporalscaling);                      
 		   }
 		   else
 		   {
 			// EBG - 20160606
-			// Calculate the sleep time by subtracting the timestamps from the tracefile.
+			// Calculate the sleep time by subtracting the timestamps from the tracefile.                      
                         double newtimestamp = (Double.valueOf(trace[2]))*timestampfactor;
-                        sleeptime += Math.round(newtimestamp - prevtimestamp);
+                        sleeptime += Math.round((newtimestamp - prevtimestamp)*temporalscaling);
                         prevtimestamp = newtimestamp;
 		   }
 
