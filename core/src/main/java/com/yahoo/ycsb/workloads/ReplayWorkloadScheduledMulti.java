@@ -207,27 +207,14 @@ public class ReplayWorkloadScheduledMulti extends Workload
 	//long prevtimestamp;
         double prevtimestamp;
 	
-	// EBG - 20160613
-	/**
-	 * The name of the property for deciding if use the sleep times are precomputed in the tracefile, default is true.
-	 */
-	public static final String WITH_SLEEP_PROPERTY="withsleep";
-	
-	/**
-	 * The default value for the withsleep property.
-	 */
-	public static final String WITH_SLEEP_PROPERTY_DEFAULT="true";
-
-	boolean withsleep;
-        
-                /**
-	 * The name of the property for deciding to use a temporal scaling over the workload
-	 */
+        /**
+	* The name of the property for deciding to use a temporal scaling over the workload
+	*/
         public static final String TEMPORAL_SCALING_PROPERTY = "temporalscaling";
         
-         /**
-	 * dafault value of temporal scaling
-	 */
+        /**
+	* dafault value of temporal scaling
+	*/
         public static final String TEMPORAL_SCALING_PROPERTY_DEFAULT = "1.0";
         
 	
@@ -526,11 +513,9 @@ public class ReplayWorkloadScheduledMulti extends Workload
 		readallfields=Boolean.parseBoolean(p.getProperty(READ_ALL_FIELDS_PROPERTY,READ_ALL_FIELDS_PROPERTY_DEFAULT));
 		writeallfields=Boolean.parseBoolean(p.getProperty(WRITE_ALL_FIELDS_PROPERTY,WRITE_ALL_FIELDS_PROPERTY_DEFAULT));
 
-		// EBG - 2016-06-04
 		// Properties for cache behaviour and for using timestamp from tracefile
 		ascache=Boolean.parseBoolean(p.getProperty(AS_CACHE_PROPERTY,AS_CACHE_PROPERTY_DEFAULT));
 		withtimestamp=Boolean.parseBoolean(p.getProperty(WITH_TIMESTAMP_PROPERTY,WITH_TIMESTAMP_PROPERTY_DEFAULT));
-		withsleep=Boolean.parseBoolean(p.getProperty(WITH_SLEEP_PROPERTY,WITH_SLEEP_PROPERTY_DEFAULT));
 		timestampfactor=Integer.parseInt(p.getProperty(TIMESTAMP_FACTOR_PROPERTY,TIMESTAMP_FACTOR_PROPERTY_DEFAULT));
 		instances=Integer.parseInt(p.getProperty(INSTANCES_PROPERTY,INSTANCES_PROPERTY_DEFAULT));
 		instanceid=Integer.parseInt(p.getProperty(INSTANCEID_PROPERTY,INSTANCEID_PROPERTY_DEFAULT));
@@ -826,20 +811,11 @@ public class ReplayWorkloadScheduledMulti extends Workload
 		// long sleeptime = 0;
 		long delay = 0;
 		if (withtimestamp) {
-		   if (withsleep) 
-		   {
-			// EBG - 20160613
-			// If "withsleep" is enabled, the the sleep time directly from the trace file.
-                       sleeptime += (long) Math.round(Double.parseDouble(trace[2])*temporalscaling);
-		   }
-		   else
-		   {
-			// EBG - 20160606
-			// Calculate the sleep time by subtracting the timestamps from the tracefile.
-                        double newtimestamp = (Double.valueOf(trace[2]))*timestampfactor;
-                        sleeptime += Math.round((newtimestamp - prevtimestamp)*temporalscaling);
-                        prevtimestamp = newtimestamp;
-		   }
+
+		   // Calculate the sleep time by subtracting the timestamps from the tracefile.
+                   double newtimestamp = (Double.valueOf(trace[2]))*timestampfactor;
+                   sleeptime += Math.round((newtimestamp - prevtimestamp)*temporalscaling);
+                   prevtimestamp = newtimestamp;
 
 		   //System.out.println("Delay: " + sleeptime);
 		   currentTime = System.currentTimeMillis();
