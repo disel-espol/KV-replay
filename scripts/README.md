@@ -5,7 +5,7 @@ For many purposes is important to scale up or down a trace. Some times we have a
 
 ## Format of the input trace
 
-First of all the format the trace file should have, for the three input scripts,  is these:
+First of all the format the trace file should have, for the three scripts,  is these:
 ```
 READ,1bhOE7xcZyg,1201639757.082532,965
 READ,3TKi92CP-vc,1201639761.780669,2
