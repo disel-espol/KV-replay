@@ -102,7 +102,7 @@ Intensifying is a way to scale up a trace. The objective of these method is to g
 The script has 4 **parameters** to enter. The first is the **original trace file** that we want to scale, the second is the **TIF** we want to made, where TIF means trace intensifying factor , these is the number of subtraces generated and merged. The third is the **name of the output file** that will be generated
 
 
-The fourth is a an optional value that **defines the way in which the script work**. These optional parameter works in the same way as the parameter present in the subTracing script. That's because the script needs to subtrace first the original trace so to accomplish that using the same process that the subtracing script use. The values that these parameter can have: : **sha, md5, tr, onlynumbers and ascii**. The default value is md5 .
+The fourth is a an optional value that **defines the way in which the script work**. These optional parameter works in the same way as the parameter present in the subTracing script. That's because the script needs to make subtraces starting from the input original trace.To accomplish that it uses the same process that the subtracing script do. The values that these parameter can have are: **sha, md5, tr, onlynumbers and ascii**. The default value is md5 .
 
 The output trace will have the **same number of records** as the original, but the records will be in order. That means that after a subtrace n record will follow a record part of the subtrace n+1 . That until it reachs a record part of the last subtrace, in that case the record that will follow it is some record part of the subtrace 1. The timestamps also will be compressed. 
 
