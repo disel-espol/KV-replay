@@ -95,22 +95,16 @@ Would generate 4 traces using sha. And it will print the name of the output subt
 
 ### Explanation
 
-### Description of how to use the script
+Intensifying is a way to scale up a trace. The objective of these method is to generate a trace with the same amount of records and keys as the original but **temporally and spatially scaled**. To accomplish that the original trace is divided in subtraces that are aligned at time 0 and merged to create an illusion of concurrency , in which a record of the subtrace N is replayed after a record of the subtrace N-1. The numbers of subtraces created and originated is also called **TIF** acronym of **trace intensifying factor**. The timestamps between records is also compressed in a factor proportional to the number of subtraces present.
 
-First of all the format the trace file should have is these:
-```
-READ,1bhOE7xcZyg,1201639757.082532,965
-READ,3TKi92CP-vc,1201639761.780669,2
-READ,1bhOE7xcZyg,1201639762.360242,965
-```
-Were the first column is the kind of operation to do, the second is the key that reference the object in the database , the third is the timestamp , and the fourth is the size of the object. Also the separator that split the columns should be the coma.
+### Description of how to use the script
 
 The script has 4 **parameters** to enter. The first is the **original trace file** that we want to scale, the second is the **TIF** we want to made, where TIF means trace intensifying factor , these is the number of subtraces generated and merged. The third is the **name of the output file** that will be generated
 
 
-The fourth is a an optional value that **defines the way in which the algorithm work**. To define the subtraces the script use the keys of the trace and transform each of them into numbers. These parameter define the way that key is converted to a number. For that there are defined the values that these parameter can have: **sha, md5, tr, onlynumbers and ascii**. And each of them have different time performances. The order of time performance from best to worst is : onlynumbers, md5 , sha , tr and finally ascii. The variance of registries in each trace is nearly the same * . Is important to notice that parameter value only numbers only works when the trace keys are numbers. Also ascii works when the keys are composed by ascii characters and tr when keys are composed by alphanumeric characters or/and the symbols @%-_ . Default value is md5
+The fourth is a an optional value that **defines the way in which the script work**. These optional parameter works in the same way as the parameter present in the subTracing script. That's because the script needs to subtrace first the original trace so to accomplish that using the same process that the subtracing script use. The values that these parameter can have: : **sha, md5, tr, onlynumbers and ascii**. The default value is md5 .
 
-The output trace will have the **same number of records** as the original, but the records will be in order. That means that after a subtrace n record will follow a record part of the subtrace n+1 . That until it reachs a record part of the last subtrace, in that case the record that will follow it is some record part of the subtrace 1. The timestamps also will be comprossed. 
+The output trace will have the **same number of records** as the original, but the records will be in order. That means that after a subtrace n record will follow a record part of the subtrace n+1 . That until it reachs a record part of the last subtrace, in that case the record that will follow it is some record part of the subtrace 1. The timestamps also will be compressed. 
 
 ### Example of use 
 
