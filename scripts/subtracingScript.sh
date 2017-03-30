@@ -133,5 +133,5 @@ done
 for (( k=1; k<=$numberOfSubtraces; k++ ))
 do
 	value=$(( k -1))
-	echo " the subtrace : $inputTrace-subtrace-$k-of-$numberOfSubtraces-method-$typeAlgorithm has ${table[$value]} records and ${tableArrayObjects[$value]} unique objects"
+	echo " the subtrace : $inputTrace-subtrace-$k-of-$numberOfSubtraces-method-$typeAlgorithm has ${table[$value]} records , for ${tableArrayObjects[$value]} objects"
 done
