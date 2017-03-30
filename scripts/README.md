@@ -1,19 +1,21 @@
-
 # Spatial Scaling
 
-For many purposes is important to scale up or down a trace. Some times we have a lack of availability of posibles traces. Other times we want to pressure the system in a way the original trace not allow us. For that KV-replay provides a way in which we can spatial scale up or down a trace. To spatialy scale our trace KV-replay provides three Bash Scripts , each of them different and with a different aproach . Cloning script and intensifying script scales up the original trace. Subtracing script scale down the original trace. Each of them output a different trace based in the input trace. The explanation of the approach, how works, and examples of use is below.
+For many purposes is important to scale up or down a trace. Sometimes we do not have enough trace files for our evaluations, or we could need to increase/decrease the pressure on the target system. To spatialy scale our trace KV-replay provides three shell scripts (Bash), each of them providing a different scaling aproach. *Cloning* and *intensifying* scripts scale-up the original trace. *Subtracing* script scales-down the original trace. Each of them will produce a new tracefile based in the input trace.
 
 ## Format of the input trace
 
-First of all the format the trace file should have, for the three scripts,  is these:
+These three scripts require a CSV tracefile with the same format as expected by KV-replay:
+
+```sh
+<Command, Object ID, Timestamp, Size>
+```
+For example:
 ```
 READ,1bhOE7xcZyg,1201639757.082532,965
 READ,3TKi92CP-vc,1201639761.780669,2
 READ,1bhOE7xcZyg,1201639762.360242,965
+...
 ```
-Were the first column is the **kind of operation** to do, the second is **the key that reference the object** in the database , the third is the **timestamp** , and the fourth is the **size of the object**. Also the separator that split the columns should be the coma.
-
-To highlight that the scripts will work even if the fourth column, the object size, is not provided.
 
 ## Clone Scaling
 
