@@ -95,14 +95,12 @@ Would generate 4 traces using sha. And it will print the name of the output subt
 
 ### Explanation
 
-Intensifying is a way to scale up a trace. The objective of these method is to generate a trace with the same amount of records and keys as the original but **temporally and spatially scaled**. To accomplish that the original trace is divided in subtraces that are aligned at time 0 and merged to create an illusion of concurrency , in which a record of the subtrace N is replayed after a record of the subtrace N-1. The numbers of subtraces created and originated is also called **TIF** acronym of **trace intensifying factor**. The timestamps between records is also compressed in a factor proportional to the number of subtraces present.
+Intensifying is a way to scale up a trace. The objective of these method is to generate a trace with the same amount of records and keys as the original but **temporally and spatially scaled**. To accomplish that the original trace is divided in subtraces that are aligned at time 0 and merged to create an illusion of concurrency , in which a record of the subtrace N is replayed after a record of the subtrace N-1. The numbers of subtraces created and originated is also called **TIF** acronym of **trace intensifying factor**. The timestamps between records is also compressed in a factor proportional to the number of subtraces present. Is important to say that the subtraces obtained with these method are not the same that the ones obtained with the subtracing script
 
 ### Description of how to use the script
 
-The script has 4 **parameters** to enter. The first is the **original trace file** that we want to scale, the second is the **TIF** we want to made, where TIF means trace intensifying factor , these is the number of subtraces generated and merged. The third is the **name of the output file** that will be generated
+The script has 3 **parameters** to enter. The first is the **original trace file** that we want to scale, the second is the **TIF** we want to made, where TIF means trace intensifying factor , these is the number of subtraces generated and merged. The third is the **name of the output file** that will be generated
 
-
-The fourth is a an optional value that **defines the way in which the script work**. These optional parameter works in the same way as the parameter present in the subTracing script. That's because the script needs to make subtraces starting from the input original trace.To accomplish that it uses the same process that the subtracing script do. The values that these parameter can have are: **sha, md5, tr, onlynumbers and ascii**. The default value is md5 .
 
 The output trace will have the **same number of records** as the original, but the records will be in order. That means that after a subtrace n record will follow a record part of the subtrace n+1 . That until it reachs a record part of the last subtrace, in that case the record that will follow it is some record part of the subtrace 1. The timestamps also will be compressed. 
 
@@ -112,13 +110,8 @@ The output trace will have the **same number of records** as the original, but t
 ```
 ./intensifyingScript.sh traceExample.dat 4 traceOutput.dat
 ```
-That would generate an intenseTrace with a TIF=4 named traceOutput.dat originated from the trace named traceExample.dat. It would use the default algorithm md5 to originate the subtraces.
+That would generate an intenseTrace with a TIF=4 named traceOutput.dat originated from the trace named traceExample.dat.
 
-**2**
-```
-./intensifyingScript.sh traceExample.dat 4 traceOutput.dat sha
-```
-That would generate an intenseTrace with a TIF=4 named traceOutput.dat originated from the trace named traceExample.dat. It would use the algorithm sha to originate the subtraces.
 
 
 
