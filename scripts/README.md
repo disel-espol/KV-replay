@@ -45,7 +45,7 @@ The script has 3 **parameters** to enter. The first is the **original trace file
 
 The third is a an optional value that **defines the way in which the algorithm work**. To define the subtraces the script use the keys of the trace and transform each of them into numbers. These parameter define the way that key is converted to a number. For that there are defined the values that these parameter can have: **sha, md5, tr, onlynumbers and ascii**. And each of them have different time performances. The order of time performance from best to worst is : onlynumbers, md5 , sha , tr and finally ascii. The variance of registries in each trace is nearly the same * . Is important to notice that parameter value only numbers only works when the trace keys are numbers. Also ascii works when the keys are composed by ascii characters and tr when keys are composed by alphanumeric characters or/and the symbols @%-_ . Default value is md5 .
 
-After the trace is executed it will print the name of each subtrace and the number of records each of one has.
+After the trace is executed it will print the name of each subtrace, the number of records each of one has, and also the amount of objects that references each trace.
 
 The name of each subtrace will have the next **format**:
 ```
@@ -67,13 +67,13 @@ where
 ```
 ./subTracingScript.sh traceExample.dat 4
 ```
-Would generate 4 traces using the md5 method. And it will print the name of the output subtraces and the corresponding records of each of them.
+Would generate 4 traces using the md5 method. And it will print the name of the output subtraces, the corresponding records of each of them, and also the amount of objects that references each trace.
 
 ```
- the subtrace : traceExample.dat-subtrace-1-of-4-method-md5 has 243 records
- the subtrace : traceExample.dat-subtrace-2-of-4-method-md5 has 249 records
- the subtrace : traceExample.dat-subtrace-3-of-4-method-md5 has 282 records
- the subtrace : traceExample.dat-subtrace-4-of-4-method-md5 has 226 records
+ the subtrace : traceExample.dat-subtrace-1-of-4-method-md5 has 243 records , for 186 objects
+ the subtrace : traceExample.dat-subtrace-2-of-4-method-md5 has 249 records , for 191 objects
+ the subtrace : traceExample.dat-subtrace-3-of-4-method-md5 has 282 records , for 190 objects
+ the subtrace : traceExample.dat-subtrace-4-of-4-method-md5 has 226 records , for 185 objects
 ```
 
 
@@ -81,12 +81,37 @@ Would generate 4 traces using the md5 method. And it will print the name of the 
 ```
 ./subTracingScript.sh traceExample.dat 4 sha
 ```
-Would generate 4 traces using sha. And it will print the name of the output subtraces and the corresponding records of each of them.
+Would generate 4 traces using sha. And it will print the name of the output subtraces, the corresponding records of each of them, and also the amount of objects that references each trace.
 
 ```
- the subtrace : traceExample.dat-subtrace-1-of-4-method-sha has 266 records
- the subtrace : traceExample.dat-subtrace-2-of-4-method-sha has 265 records
- the subtrace : traceExample.dat-subtrace-3-of-4-method-sha has 255 records
- the subtrace : traceExample.dat-subtrace-4-of-4-method-sha has 214 records
-
+ the subtrace : traceExample.dat-subtrace-1-of-4-method-sha has 266 records , for 201 objects
+ the subtrace : traceExample.dat-subtrace-2-of-4-method-sha has 265 records , for 199 objects
+ the subtrace : traceExample.dat-subtrace-3-of-4-method-sha has 255 records , for 174 objects
+ the subtrace : traceExample.dat-subtrace-4-of-4-method-sha has 214 records , for 178 objects
 ```
+
+## Intensifying Scaling
+
+### Explanation
+
+Intensifying is a way to scale up a trace. The objective of these method is to generate a trace with the same amount of records and keys as the original but **temporally and spatially scaled**. To accomplish that the original trace is divided in subtraces that are aligned at time 0 and merged to create an illusion of concurrency , in which a record of the subtrace N is replayed after a record of the subtrace N-1. The numbers of subtraces created and originated is also called **TIF** acronym of **trace intensifying factor**. The timestamps between records is also compressed in a factor proportional to the number of subtraces present. Is important to say that the subtraces obtained with these method are not the same that the ones obtained with the subtracing script.
+
+### Description of how to use the script
+
+The script has 3 **parameters** to enter. The first is the **original trace file** that we want to scale, the second is the **TIF** we want to made, where TIF means trace intensifying factor , these is the number of subtraces generated and merged. The third is the **name of the output file** that will be generated.
+
+
+The output trace will have the **same number of records** as the original, but the records will be in order. That means that after a subtrace n record will follow a record part of the subtrace n+1 . That until it reachs a record part of the last subtrace, in that case the record that will follow it is some record part of the subtrace 1. The timestamps also will be compressed. 
+
+### Example of use 
+
+**1**
+```
+./intensifyingScript.sh traceExample.dat 4 traceOutput.dat
+```
+That would generate an intenseTrace with a TIF=4 named traceOutput.dat originated from the trace named traceExample.dat.
+
+
+
+
+
