@@ -1,5 +1,7 @@
 
 declare -A table=()
+declare -A tableObjects=()
+tableArrayObjects=()
 
 inputTrace=$1
 numberOfSubtraces=$2
@@ -78,16 +80,33 @@ while IFS=$separator read -ra ARRAY || [[ -n "$ARRAY" ]]; do
 				echo $COMMAND$separator$ID$separator$TIMESTAMP$separator$SIZE >> "$inputTrace-subtrace-$number-of-$numberOfSubtraces-method-$typeAlgorithm"
 				if [ -n "${table[$i] + 1}" ]; then	
 					let table[$i]+=1
+					if [ -z "${tableObjects[$ID] + 1}" ]
+					then
+						tableObjects[$ID]=$i
+					fi
+
 				else
 					let table[$i]=1
+					if [ -z "${tableObjects[$ID] + 1}" ]
+					then
+						tableObjects[$ID]=$i
+					fi
 				fi
 			else
 				let number=$(( i + 1))
 				echo $COMMAND$separator$ID$separator$TIMESTAMP >> "$inputTrace-subtrace-$number-of-$numberOfSubtraces-method-$typeAlgorithm"
 				if [ -n "${table[$i] + 1}" ]; then	
 					let table[$i]+=1
+					if [ -z "${tableObjects[$ID] + 1}" ]
+					then
+						tableObjects[$ID]=$i
+					fi
 				else
 					let table[$i]=1
+					if [ -z "${tableObjects[$ID] + 1}" ]
+					then
+						tableObjects[$ID]=$i
+					fi
 				fi
 
 			fi
@@ -98,8 +117,21 @@ while IFS=$separator read -ra ARRAY || [[ -n "$ARRAY" ]]; do
 
 done < "$inputTrace"
 
+
+for value in ${tableObjects[@]}
+do
+	if [ -n "${tableArrayObjects[$value]} +1" ]
+	then
+		let tableArrayObjects[$value]+=1
+	else
+		let tableArrayObjects[$value]=1
+
+	fi
+done
+
+
 for (( k=1; k<=$numberOfSubtraces; k++ ))
 do
 	value=$(( k -1))
-	echo " the subtrace : $inputTrace-subtrace-$k-of-$numberOfSubtraces-method-$typeAlgorithm has ${table[$value]} records"
+	echo " the subtrace : $inputTrace-subtrace-$k-of-$numberOfSubtraces-method-$typeAlgorithm has ${table[$value]} records and ${tableArrayObjects[$value]} unique objects"
 done
