@@ -2,8 +2,6 @@
 inputTrace=$1
 TIF=$2
 outputTrace=$3
-typeAlgorithm=${4:-md5}
-separator=,
 
 size=$( wc -l $inputTrace | cut -d" " -f1 )
 perfectSize=$(( size / TIF ))
