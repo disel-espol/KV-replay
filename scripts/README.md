@@ -1,6 +1,6 @@
 # Spatial Scaling
 
-For many purposes is important to scale up or down a trace. Sometimes we do not have enough trace files for our evaluations, or we could need to increase/decrease the pressure on the target system. To spatialy scale our trace KV-replay provides three shell scripts (Bash), each of them providing a different scaling aproach. *Cloning* and *intensifying* scripts scale-up the original trace. *Subtracing* script scales-down the original trace. Each of them will produce a new tracefile based in the input trace.
+For many purposes is important to scale up or down a trace. Sometimes we do not have enough trace files for our evaluations, or we could need to increase/decrease the pressure on the target system. To spatially scale our trace KV-replay provides three shell scripts (Bash), each of them providing a different scaling aproach. *Cloning* and *intensifying* scripts scale-up the original trace. *Subtracing* script scales-down the original trace. Each of them will produce a new tracefile based in the input trace.
 
 ## Format of the input trace
 
@@ -19,20 +19,16 @@ READ,1bhOE7xcZyg,1201639762.360242,965
 
 ## Clone Scaling
 
-### Explanation
-Cloning is one of the ways to scale up the trace . For that it takes the original input trace and for each record , the script makes n copies of it , depending on the number of copies the user want. Each key of the record is refformated so each copy is unique. Is important to notice that , although each key is formatted, the original operation, timestamp and size of the record remains the same for each copy. The output trace will have n times the amount of records of the original trace.
+Cloning is one of the ways to scale up the trace . For that it takes the original input trace and for each record, the script makes *n* copies of it, depending on the number of copies the user want. Each key of the record is changed so they become unique. Is important to notice that the original operation, timestamp and object size remain the same for each new copy. The output trace will have *n* times the amount of records of the original trace.
 
+### How to use the script
 
-### Description of how to use the script
+The script requires **3** parameters. The first parameter is the name of the **original tracefile** to be sccaled, the second parameter is the **number of copies** we want to made, and the third  parameter is the **name of the output file** that will be generated. 
 
-
-The script has 3 **parameters** to enter. The first is the **original trace** file that we want to scale, the second is the **number of copies** we want to made, the third is the **name of the output file** that will be generated. 
-
-### Example of use
+### Example
 ```
 ./cloneScript.sh originalTraceFile.dat 4 originalTraceFile-scaled4times.dat
 ```
-
 
 ## SubTracing Scaling
 
