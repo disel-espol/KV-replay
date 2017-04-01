@@ -94,14 +94,14 @@ Would generate 4 traces using sha. And it will print the name of the output subt
 
 ### Explanation
 
-Intensifying is a way to scale up a trace. The objective of these method is to generate a trace with the same amount of records and keys as the original but **temporally and spatially scaled**. To accomplish that the original trace is divided in subtraces that are aligned at time 0 and merged to create an illusion of concurrency , in which a record of the subtrace N is replayed after a record of the subtrace N-1. The numbers of subtraces created and originated is also called **TIF** acronym of **trace intensifying factor**. The timestamps between records is also compressed in a factor proportional to the number of subtraces present. Is important to say that the subtraces obtained with these method are not the same that the ones obtained with the subtracing script.
+Intensifying is a way to scale up a trace. The objective of these method is to generate a trace with the same amount of records and keys as the original but **temporally and spatially scaled**. To accomplish that the original trace is divided in subtraces that are aligned at time 0 and merged to create an illusion of concurrency . The numbers of subtraces created and originated is also called **TIF** acronym of **trace intensifying factor**. Is important to say that the subtraces obtained with these method are not the same that the ones obtained with the subtracing script.
 
 ### Description of how to use the script
 
 The script has 3 **parameters** to enter. The first is the **original trace file** that we want to scale, the second is the **TIF** we want to made, where TIF means trace intensifying factor , these is the number of subtraces generated and merged. The third is the **name of the output file** that will be generated.
 
 
-The output trace will have the **same number of records** as the original, but the records will be in order. That means that after a subtrace n record will follow a record part of the subtrace n+1 . That until it reachs a record part of the last subtrace, in that case the record that will follow it is some record part of the subtrace 1. The timestamps also will be compressed. 
+The output trace will have nearly **same number of records** as the original, but the records will be in order. All the subtraces are aligned at time zero , so when they are merge, the order of the records will depend of its order in the subtrace and its value in that subtrace. Is important to notice that output trace **won't have the exactly same number of records** because the division in subtraces normally have a **resid** and that records are not count in the output trace.That means that if the original trace have **n** records and in the output trace there will be **st** merged subtraces, the output will have **st\*floor( st / 3)** records . For example if n=1000 and st=3 the output trace will have 999 records.
 
 ### Example of use 
 
