@@ -826,7 +826,7 @@ public class ReplayWorkloadScheduledMulti extends Workload
                 }
 
 		// Schedule the event
-		System.out.println(dbkey + "," + trace[2] + "," + sleeptime + "," + delay);
+		// System.out.println(dbkey + "," + trace[2] + "," + sleeptime + "," + delay);
 		scheduler.schedule(new ScheduledEvent(db, op, dbkey, fieldSize), delay, TimeUnit.MILLISECONDS);
 
 		return true;
@@ -852,7 +852,7 @@ public class ReplayWorkloadScheduledMulti extends Workload
 	    
 	    @Override
 	    public void run() {
-		System.out.println(new Timestamp(System.currentTimeMillis()) + "," + dbkey);
+		//System.out.println(new Timestamp(System.currentTimeMillis()) + "," + dbkey);
                 if (op.compareTo("READ")==0)
                 {
                 	doTransactionRead(db,dbkey, fieldSize);
