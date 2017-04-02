@@ -41,7 +41,7 @@ public abstract class Workload
 	public static final String INSERT_START_PROPERTY_DEFAULT="0";
 	
 	private volatile AtomicBoolean stopRequested = new AtomicBoolean(false);
-	
+	protected int _opsdone = 0;
       /**
        * Initialize the scenario. Create any generators and other shared objects here.
        * Called once, in the main client thread, before any operations are started.
@@ -117,4 +117,8 @@ public abstract class Workload
 	}
         public void setStartTime() {
 	}
+	public int getOpsDone()
+	{
+		return _opsdone;
+	}	
 }

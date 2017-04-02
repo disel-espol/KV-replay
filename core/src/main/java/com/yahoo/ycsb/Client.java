@@ -185,7 +185,7 @@ class ClientThread extends Thread
 
 	public int getOpsDone()
 	{
-		return _opsdone;
+		return _workload.getOpsDone();
 	}
 
 	public void run()
