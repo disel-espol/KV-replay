@@ -445,7 +445,7 @@ public class ReplayWorkloadScheduledMulti extends Workload
     public static final String SIZE_FROM_TRACE_DEFAULT="false";
  
     boolean sizefromtrace; 
-	
+
 	protected static IntegerGenerator getFieldLengthGenerator(Properties p) throws WorkloadException{
 		IntegerGenerator fieldlengthgenerator;
 		String fieldlengthdistribution = p.getProperty(FIELD_LENGTH_DISTRIBUTION_PROPERTY, FIELD_LENGTH_DISTRIBUTION_PROPERTY_DEFAULT);
@@ -873,6 +873,8 @@ public class ReplayWorkloadScheduledMulti extends Workload
                 {
                         doTransactionReadModifyWrite(db,dbkey, fieldSize);
                 }
+                //increment number of operations done
+                _opsdone++;
 	    } 
 	}
 

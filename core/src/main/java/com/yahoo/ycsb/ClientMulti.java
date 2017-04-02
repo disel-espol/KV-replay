@@ -98,7 +98,6 @@ class StatusThreadMulti extends Thread
 
 			long interval=en-st;
 			//double throughput=1000.0*((double)totalops)/((double)interval);
-
 			double curthroughput=1000.0*(((double)(totalops-lasttotalops))/((double)(en-lasten)));
 			
 			lasttotalops=totalops;
@@ -187,7 +186,7 @@ class ClientMultiThread extends Thread
 
 	public int getOpsDone()
 	{
-		return _opsdone;
+		return _workload.getOpsDone();
 	}
 
 	public void run()
