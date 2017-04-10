@@ -82,14 +82,18 @@ Would generate **4* traces using the **sha** hash method. And it will print the 
 
 ### Explanation
 
-Intensifying is a way to scale up a trace. The objective of these method is to generate a trace with the same amount of records and keys as the original but **temporally and spatially scaled**. To accomplish that the original trace is divided in subtraces that are aligned at time 0 and merged to create an illusion of concurrency , in which a record of the subtrace N is replayed after a record of the subtrace N-1. The numbers of subtraces created and originated is also called **TIF** acronym of **trace intensifying factor**. The timestamps between records is also compressed in a factor proportional to the number of subtraces present. Is important to say that the subtraces obtained with these method are not the same that the ones obtained with the subtracing script.
+Intensifying is a way to scale up a trace. The objective of these method is to generate a trace with the same amount of records and keys as the original but **temporally and spatially scaled**. To accomplish that the original trace is divided in subtraces that are aligned at time 0 and merged to create an illusion of concurrency . The numbers of subtraces created and originated is also called **TIF** acronym of **trace intensifying factor**. Is important to say that the subtraces obtained with these method are not the same that the ones obtained with the subtracing script.
 
 ### Description of how to use the script
 
-The script has 3 **parameters** to enter. The first is the **original trace file** that we want to scale, the second is the **TIF** we want to made, where TIF means trace intensifying factor , these is the number of subtraces generated and merged. The third is the **name of the output file** that will be generated.
+The script has 4 **parameters** to enter. The first is the **original trace file** that we want to scale, the second is the **TIF** we want to made, where TIF means trace intensifying factor , these is the number of subtraces generated and merged. The third is the **name of the output file** that will be generated. The fourth parameter is an **optional boolean parameter** that defines the way in which the subtraces are made. If is **true** the division of subtraces will be **by time**. If it is **false** the division of the subtraces will be by **the number of registers**. Each method is better explained in the paragraph below. **Default** value is **true**.
 
 
-The output trace will have the **same number of records** as the original, but the records will be in order. That means that after a subtrace n record will follow a record part of the subtrace n+1 . That until it reachs a record part of the last subtrace, in that case the record that will follow it is some record part of the subtrace 1. The timestamps also will be compressed. 
+The division of subtraces by time divides the original trace that has a duration of **t time** in subtraces with **t/TIF
+approximately duration each one**. In the same way ,division by number of subtraces will divide the original trace in **n** subtraces with **n/TIF records each one** . Is important to notice that in these particular method, the output trace **won't have the exactly same number of records** because the division in subtraces normally have a **residue** and that records are not count in the output trace. That means that if the original trace have **n** records and in the output trace there will be **st** merged subtraces, the output will have **st\*floor( st / 3)** records . For example if n=1000 and st=3 the output trace will have 999 records.
+
+Both methods **merge the records** and put them in order **aligned at time zero**. The records in the output trace could be identified by subtrace because each record now has a **subtrace ID at the beggining**. 
+
 
 ### Example of use 
 
@@ -97,7 +101,19 @@ The output trace will have the **same number of records** as the original, but t
 ```
 ./intensifyingScript.sh traceExample.dat 4 traceOutput.dat
 ```
-That would generate an intenseTrace with a TIF=4 named traceOutput.dat originated from the trace named traceExample.dat.
+That would generate an intenseTrace with a TIF=4 named traceOutput.dat originated from the trace named traceExample.dat. The division in subtraces will be by time.
+
+**2**
+```
+./intensifyingScript.sh traceExample.dat 4 traceOutput.dat false
+```
+That would generate an intenseTrace with a TIF=4 named traceOutput.dat originated from the trace named traceExample.dat. The division in subtraces will be by number or records.
+
+**3**
+```
+./intensifyingScript.sh traceExample.dat 4 traceOutput.dat true
+```
+That would generate an intenseTrace with a TIF=4 named traceOutput.dat originated from the trace named traceExample.dat. The division in subtraces will be by time.
 
 
 
