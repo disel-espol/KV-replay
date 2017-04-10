@@ -86,10 +86,14 @@ Intensifying is a way to scale up a trace. The objective of these method is to g
 
 ### Description of how to use the script
 
-The script has 3 **parameters** to enter. The first is the **original trace file** that we want to scale, the second is the **TIF** we want to made, where TIF means trace intensifying factor , these is the number of subtraces generated and merged. The third is the **name of the output file** that will be generated.
+The script has 4 **parameters** to enter. The first is the **original trace file** that we want to scale, the second is the **TIF** we want to made, where TIF means trace intensifying factor , these is the number of subtraces generated and merged. The third is the **name of the output file** that will be generated. The fourth parameter is an **optional boolean parameter** that defines the way in which the subtraces are made. If is **true** the division of subtraces will be **by time**. If it is **false** the division of the subtraces will be by **the number of registers**. Each method is better explained in the paragraph below. **Default** value is **true**.
 
 
-The output trace will have nearly **same number of records** as the original, but the records will be in order. All the subtraces are aligned at time zero , so when they are merge, the order of the records will depend of its order in the subtrace and its value in that subtrace. Is important to notice that output trace **won't have the exactly same number of records** because the division in subtraces normally have a **residue** and that records are not count in the output trace.That means that if the original trace have **n** records and in the output trace there will be **st** merged subtraces, the output will have **st\*floor( st / 3)** records . For example if n=1000 and st=3 the output trace will have 999 records.
+The division of subtraces by time divides the original trace that has a duration of **t time** in subtraces with **t/TIF
+approximately duration each one**. In the same way ,division by number of subtraces will divide the original trace in **n** subtraces with **n/TIF records each one** . Is important to notice that in these particular method, the output trace **won't have the exactly same number of records** because the division in subtraces normally have a **residue** and that records are not count in the output trace. That means that if the original trace have **n** records and in the output trace there will be **st** merged subtraces, the output will have **st\*floor( st / 3)** records . For example if n=1000 and st=3 the output trace will have 999 records.
+
+Both methods **merge the records** and put them in order **aligned at time zero**. The records in the output trace could be identified by subtrace because each record now has a **subtrace ID at the beggining**. 
+
 
 ### Example of use 
 
@@ -97,7 +101,19 @@ The output trace will have nearly **same number of records** as the original, bu
 ```
 ./intensifyingScript.sh traceExample.dat 4 traceOutput.dat
 ```
-That would generate an intenseTrace with a TIF=4 named traceOutput.dat originated from the trace named traceExample.dat.
+That would generate an intenseTrace with a TIF=4 named traceOutput.dat originated from the trace named traceExample.dat. The division in subtraces will be by time.
+
+**2**
+```
+./intensifyingScript.sh traceExample.dat 4 traceOutput.dat false
+```
+That would generate an intenseTrace with a TIF=4 named traceOutput.dat originated from the trace named traceExample.dat. The division in subtraces will be by number or records.
+
+**3**
+```
+./intensifyingScript.sh traceExample.dat 4 traceOutput.dat true
+```
+That would generate an intenseTrace with a TIF=4 named traceOutput.dat originated from the trace named traceExample.dat. The division in subtraces will be by time.
 
 
 
