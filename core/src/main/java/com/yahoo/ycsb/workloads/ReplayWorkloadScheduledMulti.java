@@ -264,6 +264,7 @@ public class ReplayWorkloadScheduledMulti extends Workload
 	private long startTime = -1;
 	private long currentTime = -1;
 	private long sleeptime = 0;
+        private boolean booleanStartBarrier = true;
 
 
   /**
@@ -823,6 +824,12 @@ public class ReplayWorkloadScheduledMulti extends Workload
 		   //delay = sleeptime - (currentTime-startTime);
 		   delay = sleeptime - (currentTime-startTime) + 20;
 		   //System.out.println("Real delay: " + delay);
+                }
+                if ((booleanStartBarrier ) && (!withtimestamp)){
+                    currentTime = System.currentTimeMillis();
+                    delay=Math.abs(currentTime - startTime);
+                    System.out.println("boolean is (inside brackets) : " + booleanStartBarrier );
+                    booleanStartBarrier=false;
                 }
 
 		// Schedule the event

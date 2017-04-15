@@ -216,6 +216,19 @@ public class ReplayWorkloadScheduled extends Workload
 	 */
         public static final String TEMPORAL_SCALING_PROPERTY_DEFAULT = "1.0";
         
+        
+	/**
+	 * The name of the property with the start datetime
+	 */
+	public static final String STARTDATETIME_PROPERTY="startdatetime";
+	
+	/**
+	 * The default value for the STARTDATETIME property.
+	 */
+	public static final String STARTDATETIME_PROPERTY_DEFAULT="2016-01-01 00:00:00:000";
+
+	String startdatetime="2016-01-01 00:00:00:000"; /*Declared later when property is read*/
+        
   	/**
 	 * ScheduledExecutorService object to schedule the rquests.
          * We are using a single thread, because in some cases (like Redis), the client
@@ -226,6 +239,7 @@ public class ReplayWorkloadScheduled extends Workload
 	private long startTime = -1;
 	private long currentTime = -1;
 	private long sleeptime = 0;
+        private boolean booleanStartBarrier = true;
 
 
   /**
@@ -480,6 +494,8 @@ public class ReplayWorkloadScheduled extends Workload
 		ascache=Boolean.parseBoolean(p.getProperty(AS_CACHE_PROPERTY,AS_CACHE_PROPERTY_DEFAULT));
 		withtimestamp=Boolean.parseBoolean(p.getProperty(WITH_TIMESTAMP_PROPERTY,WITH_TIMESTAMP_PROPERTY_DEFAULT));
 		timestampfactor=Integer.parseInt(p.getProperty(TIMESTAMP_FACTOR_PROPERTY,TIMESTAMP_FACTOR_PROPERTY_DEFAULT));
+                
+                startdatetime=p.getProperty(STARTDATETIME_PROPERTY,STARTDATETIME_PROPERTY_DEFAULT);
 		
     		dataintegrity = Boolean.parseBoolean(p.getProperty(DATA_INTEGRITY_PROPERTY, DATA_INTEGRITY_PROPERTY_DEFAULT));
     		//Confirm that fieldlengthgenerator returns a constant if data
@@ -757,8 +773,18 @@ public class ReplayWorkloadScheduled extends Workload
 		   delay = sleeptime - (currentTime-startTime);
 		   //System.out.println("Real delay: " + delay);
                 }
-
-		// Schedule the event
+                if ((booleanStartBarrier ) && (!withtimestamp)){
+                    currentTime = System.currentTimeMillis();
+                    delay=Math.abs(currentTime - startTime);
+                    System.out.println("boolean is (inside brackets) : " + booleanStartBarrier );
+                    booleanStartBarrier=false;
+                }
+                System.out.println("boolean is : " + booleanStartBarrier );
+                System.out.println("sleepTime is: " + sleeptime);
+                System.out.println("currentTime is " + currentTime);
+		System.out.println("real delay is: " + delay);
+                
+                
 		scheduler.schedule(new ScheduledEvent(db, op, dbkey , fieldSize), delay, TimeUnit.MILLISECONDS);
 
 		return true;
@@ -818,10 +844,31 @@ public class ReplayWorkloadScheduled extends Workload
 		return scheduler.isTerminated();
  	}
 
-	/* Method to check if the scheduler is terminated */
+ 	/* Method to check if the scheduler is terminated */
 	public void setStartTime() {
-		startTime = System.currentTimeMillis();
+            	//Read the start time from the properties. If it's in the past, use currentTime.
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
+		Date date = new Date();
+		Date currentDate = new Date();
+		try {
+			date = format.parse(startdatetime);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		//long dateTimestamp = date.getTime();
+		if (date.before(currentDate)){
+			startTime = System.currentTimeMillis();
+		} else{
+                        System.out.println("entra aqui");
+			startTime = date.getTime();
+		}
+                System.out.println("\n");
+                System.out.println("date is : "  + date);
+                System.out.println("Current date is: " +  currentDate);
+                System.out.println("Start time date : " + startdatetime);
+		System.out.println("Start Time in Milliseconds: "+ startTime);
  	}
+
 
 
 

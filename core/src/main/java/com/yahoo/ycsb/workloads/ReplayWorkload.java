@@ -44,6 +44,9 @@ import java.util.ArrayList;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 /**
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -203,7 +206,25 @@ public class ReplayWorkload extends Workload
 	public static final String WITH_SLEEP_PROPERTY_DEFAULT="true";
 
 	boolean withsleep;
+        
+                
+	/**
+	 * The name of the property with the start datetime
+	 */
+	public static final String STARTDATETIME_PROPERTY="startdatetime";
+	
+	/**
+	 * The default value for the STARTDATETIME property.
+	 */
+	public static final String STARTDATETIME_PROPERTY_DEFAULT="2016-01-01 00:00:00:000";
 
+	String startdatetime="2016-01-01 00:00:00:000"; /*Declared later when property is read*/
+      
+
+        private long startTime = -1;
+	private long currentTime = -1;
+        private boolean booleanStartBarrier = true; 
+	//private long sleeptime = 0;
   /**
    * The name of the property for deciding whether to check all returned
    * data against the formation template to ensure data integrity.
@@ -455,6 +476,8 @@ public class ReplayWorkload extends Workload
 		ascache=Boolean.parseBoolean(p.getProperty(AS_CACHE_PROPERTY,AS_CACHE_PROPERTY_DEFAULT));
 		withtimestamp=Boolean.parseBoolean(p.getProperty(WITH_TIMESTAMP_PROPERTY,WITH_TIMESTAMP_PROPERTY_DEFAULT));
 		withsleep=Boolean.parseBoolean(p.getProperty(WITH_SLEEP_PROPERTY,WITH_SLEEP_PROPERTY_DEFAULT));
+                startdatetime=p.getProperty(STARTDATETIME_PROPERTY,STARTDATETIME_PROPERTY_DEFAULT);
+		
 		
     		dataintegrity = Boolean.parseBoolean(p.getProperty(DATA_INTEGRITY_PROPERTY, DATA_INTEGRITY_PROPERTY_DEFAULT));
     		//Confirm that fieldlengthgenerator returns a constant if data
@@ -730,9 +753,22 @@ public class ReplayWorkload extends Workload
 		   }
 		   //System.out.println("Delay: " + sleeptime);
                    try{	
-			Thread.sleep(sleeptime);
+                        System.out.println("sleeptime is : " + sleeptime);
+                        Thread.sleep(sleeptime);
 	           }catch(InterruptedException e){
                                 e.printStackTrace();
+                   }
+                }
+                if (booleanStartBarrier ){
+                    currentTime=System.currentTimeMillis();
+                    sleeptime=Math.abs(currentTime - startTime);
+                    try{	
+                        System.out.println("sleeptime is : " + sleeptime);
+                        Thread.sleep(sleeptime);
+	           }catch(InterruptedException e){
+                                e.printStackTrace();
+                   }finally{
+                        booleanStartBarrier=false;
                    }
                 }
 
@@ -789,6 +825,28 @@ public class ReplayWorkload extends Workload
     }
     Measurements.getMeasurements().measure("VERIFY", matchType);
   }
+  
+  	/* Method to check if the scheduler is terminated */
+	public void setStartTime() {
+            	//Read the start time from the properties. If it's in the past, use currentTime.
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
+		Date date = new Date();
+		Date currentDate = new Date();
+		try {
+			date = format.parse(startdatetime);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		//long dateTimestamp = date.getTime();
+		if (date.before(currentDate)){
+			startTime = System.currentTimeMillis();
+		} else{
+			startTime = date.getTime();
+		}
+                System.out.println("Start time in format: " + startdatetime);
+		System.out.println("Start Time in Milliseconds: "+ startTime);
+ 	}
+
 
     int nextKeynum() {
         int keynum;
