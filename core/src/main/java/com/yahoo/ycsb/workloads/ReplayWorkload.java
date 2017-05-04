@@ -764,6 +764,7 @@ public class ReplayWorkload extends Workload
                     sleeptime=Math.abs(currentTime - startTime);
                     try{	
                         System.out.println("sleeptime is : " + sleeptime);
+                        System.out.println("entra aqui y no deberia");
                         Thread.sleep(sleeptime);
 	           }catch(InterruptedException e){
                                 e.printStackTrace();
@@ -845,6 +846,12 @@ public class ReplayWorkload extends Workload
 		}
                 System.out.println("Start time in format: " + startdatetime);
 		System.out.println("Start Time in Milliseconds: "+ startTime);
+ 	}
+        
+        /* Method to obtain the start time in milliseconds */
+        @Override
+        public Long getStartTime() {
+            return startTime;
  	}
 
 

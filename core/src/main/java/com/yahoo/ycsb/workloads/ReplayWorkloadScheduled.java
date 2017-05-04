@@ -868,6 +868,12 @@ public class ReplayWorkloadScheduled extends Workload
                 System.out.println("Start time date : " + startdatetime);
 		System.out.println("Start Time in Milliseconds: "+ startTime);
  	}
+        
+        /* Method to obtain the start time in milliseconds */
+        @Override
+        public Long getStartTime() {
+            return startTime;
+ 	}
 
 
 
