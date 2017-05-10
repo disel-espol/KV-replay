@@ -753,35 +753,16 @@ public class ReplayWorkload extends Workload
 		   }
 		   //System.out.println("Delay: " + sleeptime);
                    try{	
-                        System.out.println("sleeptime is : " + sleeptime);
                         Thread.sleep(sleeptime);
 	           }catch(InterruptedException e){
                                 e.printStackTrace();
                    }
                 }
-                /*
-                if (booleanStartBarrier ){
-                    currentTime=System.currentTimeMillis();
-                    sleeptime=Math.abs(currentTime - startTime);
-                    try{	
-                        System.out.println("sleeptime is : " + sleeptime);
-                        System.out.println("entra aqui y no deberia");
-                        Thread.sleep(sleeptime);
-	           }catch(InterruptedException e){
-                                e.printStackTrace();
-                   }finally{
-                        booleanStartBarrier=false;
-                   }
-                }
-                */
                 
                 long currentTimeBarrier= System.currentTimeMillis();
                 if (( currentTimeBarrier < startTime) && !(withtimestamp)){
                     sleeptime=Math.abs(currentTimeBarrier - startTime);
-                    System.out.println("hay delay " );
                     try{	
-                        System.out.println("sleeptime is : " + sleeptime);
-                        System.out.println("entra aqui y no deberia");
                         Thread.sleep(sleeptime);
 	           }catch(InterruptedException e){
                                 e.printStackTrace();

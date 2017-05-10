@@ -773,23 +773,10 @@ public class ReplayWorkloadScheduled extends Workload
 		   delay = sleeptime - (currentTime-startTime);
 		   //System.out.println("Real delay: " + delay);
                 }
-                /*
-                if ((booleanStartBarrier ) && (!withtimestamp)){
-                    currentTime = System.currentTimeMillis();
-                    delay=Math.abs(currentTime - startTime);
-                    System.out.println("boolean is (inside brackets) : " + booleanStartBarrier );
-                    booleanStartBarrier=false;
-                }
-                System.out.println("boolean is : " + booleanStartBarrier );
-                System.out.println("sleepTime is: " + sleeptime);
-                System.out.println("currentTime is " + currentTime);
-		System.out.println("real delay is: " + delay);
-                */
                 
                 long currentTimeBarrier= System.currentTimeMillis();
                 if (( currentTimeBarrier < startTime) && !(withtimestamp)){
                     delay=Math.abs(currentTimeBarrier - startTime);
-                    System.out.println("hay delay " );
                 }
                 
 		scheduler.schedule(new ScheduledEvent(db, op, dbkey , fieldSize), delay, TimeUnit.MILLISECONDS);

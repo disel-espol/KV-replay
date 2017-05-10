@@ -849,9 +849,7 @@ public class ClientMulti
 
 		try
 		{
-                        System.out.println("este es en:" + en + " este es st: " + st);
                         if ( workload.getStartTime() != null){
-                            System.out.println("entra en el if");
                             st = workload.getStartTime();
                         }
 			exportMeasurements(props, opsDone, en - st);

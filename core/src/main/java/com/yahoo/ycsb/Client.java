@@ -833,10 +833,8 @@ public class Client
 		}
 
 		try
-		{
-                        System.out.println("este es en:" + en + " este es st: " + st);
-                        if ( workload.getStartTime() != null){
-                            System.out.println("entra en el if");
+		{                       
+                        if ( workload.getStartTime() != null){                            
                             st = workload.getStartTime();
                         }
 			exportMeasurements(props, opsDone, en - st);
