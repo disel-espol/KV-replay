@@ -223,7 +223,7 @@ public class ReplayWorkload extends Workload
 
         private long startTime = -1;
 	private long currentTime = -1;
-        private boolean booleanStartBarrier = true; 
+        //private boolean booleanStartBarrier = true; 
 	//private long sleeptime = 0;
   /**
    * The name of the property for deciding whether to check all returned
@@ -759,6 +759,7 @@ public class ReplayWorkload extends Workload
                                 e.printStackTrace();
                    }
                 }
+                /*
                 if (booleanStartBarrier ){
                     currentTime=System.currentTimeMillis();
                     sleeptime=Math.abs(currentTime - startTime);
@@ -770,6 +771,20 @@ public class ReplayWorkload extends Workload
                                 e.printStackTrace();
                    }finally{
                         booleanStartBarrier=false;
+                   }
+                }
+                */
+                
+                long currentTimeBarrier= System.currentTimeMillis();
+                if (( currentTimeBarrier < startTime) && !(withtimestamp)){
+                    sleeptime=Math.abs(currentTimeBarrier - startTime);
+                    System.out.println("hay delay " );
+                    try{	
+                        System.out.println("sleeptime is : " + sleeptime);
+                        System.out.println("entra aqui y no deberia");
+                        Thread.sleep(sleeptime);
+	           }catch(InterruptedException e){
+                                e.printStackTrace();
                    }
                 }
 
