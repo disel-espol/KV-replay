@@ -849,6 +849,9 @@ public class ClientMulti
 
 		try
 		{
+                        if ( workload.getStartTime() != null){
+                            st = workload.getStartTime();
+                        }
 			exportMeasurements(props, opsDone, en - st);
 		} catch (IOException e)
 		{

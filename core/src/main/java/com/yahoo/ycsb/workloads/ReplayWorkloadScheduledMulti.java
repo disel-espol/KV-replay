@@ -264,6 +264,7 @@ public class ReplayWorkloadScheduledMulti extends Workload
 	private long startTime = -1;
 	private long currentTime = -1;
 	private long sleeptime = 0;
+        //private boolean booleanStartBarrier = true;
 
 
   /**
@@ -824,9 +825,13 @@ public class ReplayWorkloadScheduledMulti extends Workload
 		   delay = sleeptime - (currentTime-startTime) + 20;
 		   //System.out.println("Real delay: " + delay);
                 }
+                long currentTimeBarrier= System.currentTimeMillis();
+                if (( currentTimeBarrier < startTime) && !(withtimestamp)){
+                    delay=Math.abs(currentTimeBarrier - startTime);
+                }
 
 		// Schedule the event
-		System.out.println(dbkey + "," + trace[2] + "," + sleeptime + "," + delay);
+		//System.out.println(dbkey + "," + trace[2] + "," + sleeptime + "," + delay);
 		scheduler.schedule(new ScheduledEvent(db, op, dbkey, fieldSize), delay, TimeUnit.MILLISECONDS);
 
 		return true;
@@ -904,6 +909,12 @@ public class ReplayWorkloadScheduledMulti extends Workload
 			startTime = date.getTime();
 		}
 		System.out.println("Start Time in Milliseconds: "+ startTime);
+ 	}
+        
+        /* Method to obtain the start time in milliseconds */
+        @Override
+        public Long getStartTime() {
+            return startTime;
  	}
 
 

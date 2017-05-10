@@ -117,4 +117,9 @@ public abstract class Workload
 	}
         public void setStartTime() {
 	}
+        /* method to obtain the beginning start barrier */
+        public Long getStartTime(){
+            return null;
+        }           
+        
 }
