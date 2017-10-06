@@ -126,3 +126,8 @@ Please note that each of the replayer instances must have its own KV-replay fold
    bin/kv-replay run redis -P workloads/workload-replay_template -p "redis.host=127.0.0.1" -p "redis.port=6379" -p "instances=3" -p "instanceid=3" -p startdatetime="2016-01-01 00:00:00:000" &
    cd ..
    ```
+
+Acknowledgements
+-----------------
+
+This work was funded in part by a Google Faculty Research Award awarded to [Cristina L. Abad](https://sites.google.com/site/cristinaabad/)
