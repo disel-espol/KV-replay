@@ -137,4 +137,4 @@ Referencing our work
 --------------------
 If you found our tool useful and use it in research, please cite our work as follows:
 
-*Edwin F. Boza, César San-Lucas, Cristina L. Abad, José A. Viteri, "Benchmarking key-value stores via trace replay". In Proceedings of the IEEE International Conference on Cloud Engineering (IC2E), 2017. Code available at: https://github.com/ebozag/KV-replay
+*Edwin F. Boza, César San-Lucas, Cristina L. Abad, José A. Viteri, "Benchmarking key-value stores via trace replay". In Proceedings of the IEEE International Conference on Cloud Engineering (IC2E), 2017. Code available at: https://github.com/ebozag/KV-replay*
